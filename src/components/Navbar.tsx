@@ -1,11 +1,29 @@
 import React from 'react';
-import { Search, LayoutGrid, List, Table, Plus, FolderKanban, Download, Shield, User as UserIcon, Info, WifiOff } from 'lucide-react';
-import { AuthUser, ViewMode, SystemInfo } from '../types';
+import {
+  Search,
+  LayoutGrid,
+  List,
+  Table,
+  Plus,
+  FolderKanban,
+  Download,
+  Shield,
+  User as UserIcon,
+  Info,
+  WifiOff,
+  Sun,
+  Moon,
+  Monitor,
+  Activity,
+} from 'lucide-react';
+import { AuthUser, ViewMode, SystemInfo, ThemeMode } from '../types';
 
 interface NavbarProps {
   user: AuthUser | null;
   viewMode: ViewMode;
   onSetViewMode: (mode: ViewMode) => void;
+  themeMode: ThemeMode;
+  onCycleTheme: () => void;
   onOpenSearch: () => void;
   onOpenAddLink: () => void;
   onOpenCategories: () => void;
@@ -13,12 +31,16 @@ interface NavbarProps {
   onOpenSystemInfo: () => void;
   systemInfo?: SystemInfo | null;
   isOnline: boolean;
+  onRefreshHealth?: () => void;
+  isCheckingHealth?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   user,
   viewMode,
   onSetViewMode,
+  themeMode,
+  onCycleTheme,
   onOpenSearch,
   onOpenAddLink,
   onOpenCategories,
@@ -26,6 +48,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSystemInfo,
   systemInfo,
   isOnline,
+  onRefreshHealth,
+  isCheckingHealth,
 }) => {
   const isAdmin = user?.role === 'admin';
 
@@ -146,6 +170,43 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Table className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Theme Mode Toggle (System -> Light -> Dark) */}
+          <button
+            onClick={onCycleTheme}
+            className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title={`Theme: ${themeMode === 'system' ? 'System (Auto)' : themeMode === 'light' ? 'Light' : 'Dark'} — Click to cycle`}
+            aria-label="Toggle theme mode"
+          >
+            {themeMode === 'light' ? (
+              <Sun className="w-4 h-4 text-amber-500 transition-transform hover:rotate-45" />
+            ) : themeMode === 'dark' ? (
+              <Moon className="w-4 h-4 text-indigo-400 transition-transform hover:-rotate-12" />
+            ) : (
+              <Monitor className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+            )}
+          </button>
+
+          {/* Service Health Refresh Button */}
+          {onRefreshHealth && (
+            <button
+              onClick={onRefreshHealth}
+              disabled={!isOnline || isCheckingHealth}
+              className={`p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${
+                !isOnline ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+              }`}
+              title={
+                !isOnline
+                  ? 'Service health checks unavailable offline'
+                  : isCheckingHealth
+                  ? 'Checking service availability...'
+                  : 'Re-check health of all homelab services'
+              }
+              aria-label="Refresh service health checks"
+            >
+              <Activity className={`w-4 h-4 ${isCheckingHealth ? 'animate-pulse text-indigo-500' : ''}`} />
+            </button>
+          )}
 
           {/* System Info Button */}
           <button

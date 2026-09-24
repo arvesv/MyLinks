@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Star, Edit2, Trash2, ExternalLink, Copy, Check } from 'lucide-react';
-import { LinkItem } from '../types';
+import { LinkItem, LinkHealth } from '../types';
 import { IconRenderer } from '../icons/IconRenderer';
+import { HealthBadge } from './HealthBadge';
 
 interface LinkTableRowProps {
   link: LinkItem;
   isAdmin: boolean;
+  health?: LinkHealth;
+  onPing?: (link: LinkItem) => void;
   onLinkClick: (link: LinkItem) => void;
   onEditLink: (link: LinkItem) => void;
   onDeleteLink: (link: LinkItem) => void;
@@ -18,6 +21,8 @@ interface LinkTableRowProps {
 export const LinkTableRow: React.FC<LinkTableRowProps> = ({
   link,
   isAdmin,
+  health,
+  onPing,
   onLinkClick,
   onEditLink,
   onDeleteLink,
@@ -99,6 +104,14 @@ export const LinkTableRow: React.FC<LinkTableRowProps> = ({
             <span>{link.title}</span>
             <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-70 transition-opacity" />
           </a>
+
+          {health && (
+            <HealthBadge
+              health={health}
+              onPing={onPing ? () => onPing(link) : undefined}
+              showText={true}
+            />
+          )}
         </div>
       </td>
 

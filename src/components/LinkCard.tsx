@@ -1,11 +1,14 @@
 import React from 'react';
 import { Star, Edit2, Trash2, ExternalLink } from 'lucide-react';
-import { LinkItem } from '../types';
+import { LinkItem, LinkHealth } from '../types';
 import { IconRenderer } from '../icons/IconRenderer';
+import { HealthBadge } from './HealthBadge';
 
 interface LinkCardProps {
   link: LinkItem;
   isAdmin: boolean;
+  health?: LinkHealth;
+  onPing?: (link: LinkItem) => void;
   onLinkClick: (link: LinkItem) => void;
   onEditLink: (link: LinkItem) => void;
   onDeleteLink: (link: LinkItem) => void;
@@ -18,6 +21,8 @@ interface LinkCardProps {
 export const LinkCard: React.FC<LinkCardProps> = ({
   link,
   isAdmin,
+  health,
+  onPing,
   onLinkClick,
   onEditLink,
   onDeleteLink,
@@ -40,8 +45,16 @@ export const LinkCard: React.FC<LinkCardProps> = ({
       <div>
         {/* Top Header: Icon + Admin Actions */}
         <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/60 flex items-center justify-center p-2 text-indigo-600 dark:text-indigo-400 group-hover:scale-105 group-hover:bg-slate-200 dark:group-hover:bg-slate-800 transition-all flex-shrink-0">
-            <IconRenderer icon={link.icon} iconType={link.icon_type} className="w-7 h-7" />
+          <div className="flex items-center gap-2">
+            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/60 flex items-center justify-center p-2 text-indigo-600 dark:text-indigo-400 group-hover:scale-105 group-hover:bg-slate-200 dark:group-hover:bg-slate-800 transition-all flex-shrink-0">
+              <IconRenderer icon={link.icon} iconType={link.icon_type} className="w-7 h-7" />
+            </div>
+            {health && (
+              <HealthBadge
+                health={health}
+                onPing={onPing ? () => onPing(link) : undefined}
+              />
+            )}
           </div>
 
           {/* Quick Action Buttons */}

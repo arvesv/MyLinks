@@ -2,7 +2,7 @@
 
 A vibe coded, self-hosted bookmark dashboard and homelab startpage designed for seamless operation within a **Tailscale tailnet**.
 
-Packaged as a single lightweight Docker container combining a responsive **React 18 + Tailwind CSS** frontend, a **Node.js** backend, and an embedded **SQLite** database.
+Packaged as a single lightweight Docker container combining a responsive **React 19 + Tailwind CSS** frontend, a **Node.js** backend, and an embedded **SQLite** database.
 
 ---
 
@@ -11,6 +11,11 @@ Packaged as a single lightweight Docker container combining a responsive **React
 - **Tailscale-Native Authentication**:
   - Automatically identifies users on your tailnet via Tailscale Serve / proxy headers or Tailscale LocalAPI socket.
   - Granular access control: Any tailnet member can view bookmarks and use search, while editing/managing links is restricted to configured `ADMIN_USERS`.
+- **Live Service Health & Availability Checks**:
+  - Automatically verifies reachability of local and external services with live latency (ms) and HTTP status codes.
+  - Supports self-signed TLS certificates (common in homelab setups like Proxmox, TrueNAS, and router dashboards) with on-demand single-link or full dashboard re-checking.
+- **Theme Mode Control (System / Light / Dark)**:
+  - Toggle seamlessly between system preference, light mode, and dark mode with persistent settings.
 - **Instant Fuzzy Search (`Ctrl+K` or `/`)**:
   - Interactive command palette to quickly filter and open services, internal links, or tags with arrow keys and `Enter`.
 - **Rich Icon System**:
@@ -24,10 +29,12 @@ Packaged as a single lightweight Docker container combining a responsive **React
   - **Favorites Bar**: Pinned quick-launch bar at the top for your most daily-used bookmarks.
   - **Frequently Used**: Automatically tracks click counts and bubbles up your most accessed services.
   - **Collapsible Categories**: Group links into structured categories with drag-and-drop reordering.
-  - **View Mode Toggle**: Switch seamlessly between **Card Grid** and dense **Compact List** view.
+  - **View Mode Toggle**: Switch seamlessly between **Card Grid**, dense **Compact List**, and detailed **Table** view.
   - **Tag Filter Chips**: Quickly isolate links across all categories by tag (`#iot`, `#media`, `#dev`).
 - **Backup & Portability**:
   - One-click JSON database export and restore directly from the UI.
+- **Offline PWA Support**:
+  - Service worker caching with offline snapshot display, background sync ready, and connectivity status indicator.
 - **System & Build Info Diagnostics**:
   - Clickable status indicators in the navbar and footer opening a comprehensive diagnostics modal showing Git commit SHA (with one-click copy & GitHub link), build timestamp, live server uptime ticker, Node.js runtime, OS architecture, memory usage, and SQLite database stats.
 - **Zero Heavy Dependencies**:
@@ -138,6 +145,13 @@ npm run dev
 npm run build
 npm start
 ```
+
+### Run Automated Tests
+
+```bash
+npm test
+```
+
 
 ---
 

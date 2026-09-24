@@ -1,4 +1,4 @@
-import { Category, LinkItem, AuthUser, SystemInfo } from './types';
+import { Category, LinkItem, AuthUser, SystemInfo, LinkHealth } from './types';
 
 export async function getAuthUser(): Promise<AuthUser> {
   const res = await fetch('/api/auth/me');
@@ -140,3 +140,25 @@ export async function getSystemInfo(): Promise<SystemInfo> {
   if (!res.ok) throw new Error('Failed to fetch system info');
   return res.json();
 }
+
+export async function checkLinksHealth(
+  urls?: string[],
+  linkIds?: string[],
+  bypassCache = false
+): Promise<Record<string, LinkHealth>> {
+  const res = await fetch('/api/links/health', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ urls, linkIds, bypassCache }),
+  });
+  if (!res.ok) throw new Error('Failed to check link health');
+  const data = await res.json();
+  return data.results || {};
+}
+
+export async function pingLink(id: string, fresh = false): Promise<LinkHealth> {
+  const res = await fetch(`/api/links/${id}/ping?fresh=${fresh}`);
+  if (!res.ok) throw new Error('Failed to ping link');
+  return res.json();
+}
+

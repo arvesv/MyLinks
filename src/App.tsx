@@ -9,7 +9,7 @@ import { LinkModal } from './components/LinkModal';
 import { CategoryModal } from './components/CategoryModal';
 import { BackupModal } from './components/BackupModal';
 import { SystemInfoModal } from './components/SystemInfoModal';
-import { Category, LinkItem, AuthUser, ViewMode, SystemInfo } from './types';
+import { Category, LinkItem, AuthUser, ViewMode, SystemInfo, ThemeMode, LinkHealth } from './types';
 import {
   getAuthUser,
   getCategories,
@@ -23,6 +23,8 @@ import {
   reorderLinks,
   recordLinkClick,
   getSystemInfo,
+  checkLinksHealth,
+  pingLink,
 } from './api';
 import { loadOfflineSnapshot, saveOfflineSnapshot } from './offlineStorage';
 import { Loader2, WifiOff, RefreshCw } from 'lucide-react';
@@ -41,7 +43,14 @@ export function App() {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem('mylinks_view_mode') as ViewMode) || 'grid';
   });
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    return (localStorage.getItem('mylinks_theme_mode') as ThemeMode) || 'system';
+  });
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+  // Service health checks
+  const [healthStatus, setHealthStatus] = useState<Record<string, LinkHealth>>({});
+  const [isCheckingHealth, setIsCheckingHealth] = useState(false);
 
   // Modal states
   const [searchOpen, setSearchOpen] = useState(false);
@@ -52,21 +61,42 @@ export function App() {
   const [linkToEdit, setLinkToEdit] = useState<LinkItem | null>(null);
   const [targetCategoryId, setTargetCategoryId] = useState<string | undefined>(undefined);
 
-  // System theme synchronization (follows OS/browser standard)
+  // Theme synchronization (System / Light / Dark)
   useEffect(() => {
+    localStorage.setItem('mylinks_theme_mode', themeMode);
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      if (e.matches) {
+
+    const applyTheme = () => {
+      const isDark =
+        themeMode === 'dark' ||
+        (themeMode === 'system' && mediaQuery.matches);
+
+      if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
     };
 
-    handleThemeChange(mediaQuery);
+    applyTheme();
+
+    const handleThemeChange = () => {
+      if (themeMode === 'system') {
+        applyTheme();
+      }
+    };
+
     mediaQuery.addEventListener('change', handleThemeChange);
     return () => mediaQuery.removeEventListener('change', handleThemeChange);
-  }, []);
+  }, [themeMode]);
+
+  const handleCycleTheme = () => {
+    setThemeMode(prev => {
+      if (prev === 'system') return 'light';
+      if (prev === 'light') return 'dark';
+      return 'system';
+    });
+  };
 
   // Load dashboard data and update local offline snapshot
   const loadData = async (isManualRetry = false) => {
@@ -88,12 +118,57 @@ export function App() {
         user: userData,
         systemInfo: sysInfo,
       });
+      // Run health checks in background once data is loaded
+      runHealthChecks(false);
     } catch (err: any) {
       console.warn('[Offline] Failed to load data from server; operating in offline/cached mode:', err);
       setIsOnline(false);
     } finally {
       setLoading(false);
       if (isManualRetry) setIsRetrying(false);
+    }
+  };
+
+  const runHealthChecks = async (bypassCache = false) => {
+    if (!navigator.onLine) return;
+    try {
+      setIsCheckingHealth(true);
+      const results = await checkLinksHealth(undefined, undefined, bypassCache);
+      setHealthStatus(prev => ({ ...prev, ...results }));
+    } catch (err) {
+      console.warn('[Health] Failed to run health check batch:', err);
+    } finally {
+      setIsCheckingHealth(false);
+    }
+  };
+
+  const handlePingLink = async (link: LinkItem) => {
+    if (!isOnline) return;
+    setHealthStatus(prev => ({
+      ...prev,
+      [link.url]: {
+        url: link.url,
+        status: 'checking',
+        checkedAt: Date.now(),
+      },
+    }));
+
+    try {
+      const result = await pingLink(link.id, true);
+      setHealthStatus(prev => ({
+        ...prev,
+        [link.url]: result,
+      }));
+    } catch (err: any) {
+      setHealthStatus(prev => ({
+        ...prev,
+        [link.url]: {
+          url: link.url,
+          status: 'offline',
+          error: err.message || 'Check failed',
+          checkedAt: Date.now(),
+        },
+      }));
     }
   };
 
@@ -335,6 +410,8 @@ export function App() {
         user={user}
         viewMode={viewMode}
         onSetViewMode={setViewMode}
+        themeMode={themeMode}
+        onCycleTheme={handleCycleTheme}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenAddLink={() => handleOpenAddLink()}
         onOpenCategories={() => setCategoryModalOpen(true)}
@@ -342,6 +419,8 @@ export function App() {
         onOpenSystemInfo={() => setSystemInfoModalOpen(true)}
         systemInfo={systemInfo}
         isOnline={isOnline}
+        onRefreshHealth={() => runHealthChecks(true)}
+        isCheckingHealth={isCheckingHealth}
       />
 
       {/* Offline Status Banner */}
@@ -369,7 +448,12 @@ export function App() {
       {/* Main Dashboard Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Pinned Favorites Bar */}
-        <FavoritesBar favorites={favorites} onLinkClick={handleLinkClick} />
+        <FavoritesBar
+          favorites={favorites}
+          healthStatus={healthStatus}
+          onLinkClick={handleLinkClick}
+          onPingLink={handlePingLink}
+        />
 
         {/* Global Tag Filter Chips */}
         <TagFilter tags={allTags} selectedTag={selectedTag} onSelectTag={setSelectedTag} />
@@ -380,7 +464,9 @@ export function App() {
             links={allLinks}
             viewMode={viewMode}
             isAdmin={canEdit}
+            healthStatus={healthStatus}
             onLinkClick={handleLinkClick}
+            onPingLink={handlePingLink}
             onEditLink={handleOpenEditLink}
             onDeleteLink={handleDeleteLink}
             onToggleFavorite={handleToggleFavorite}
@@ -404,6 +490,8 @@ export function App() {
               isAdmin={canEdit}
               isFirst={idx === 0}
               isLast={idx === filteredCategories.length - 1}
+              healthStatus={healthStatus}
+              onPingLink={handlePingLink}
               onToggleCollapse={handleToggleCollapse}
               onLinkClick={handleLinkClick}
               onAddLinkToCategory={handleOpenAddLink}

@@ -22,11 +22,14 @@ import {
   incrementClickCount,
   exportBackup,
   importBackup,
+  getLinkById,
+  getAllLinks,
 } from './db';
 
 import { tailscaleAuthMiddleware, requireAdmin } from './auth';
 import { fetchUrlMetadata } from './metadata';
 import { getSystemInfo } from './system';
+import { checkUrlHealth, checkMultipleUrls } from './health';
 
 // Initialize SQLite database
 initDatabase();
@@ -203,6 +206,43 @@ app.post('/api/links/:id/click', (req, res) => {
   }
 });
 
+// --- Health / Ping Status Endpoints ---
+app.post('/api/links/health', async (req, res) => {
+  try {
+    const { urls, linkIds, bypassCache } = req.body || {};
+    let targetUrls: string[] = [];
+
+    if (Array.isArray(urls)) {
+      targetUrls = urls;
+    } else if (Array.isArray(linkIds)) {
+      const all = getAllLinks();
+      const targetIds = new Set(linkIds);
+      targetUrls = all.filter(l => targetIds.has(l.id)).map(l => l.url);
+    } else {
+      const all = getAllLinks();
+      targetUrls = all.map(l => l.url);
+    }
+
+    const results = await checkMultipleUrls(targetUrls, Boolean(bypassCache));
+    res.json({ results });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/links/:id/ping', async (req, res) => {
+  try {
+    const link = getLinkById(req.params.id as string);
+    if (!link) {
+      return res.status(404).json({ error: 'Link not found' });
+    }
+    const result = await checkUrlHealth(link.url, req.query.fresh === 'true');
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- Metadata Fetching ---
 app.post('/api/metadata/fetch', requireAdmin, async (req, res) => {
   try {
@@ -260,7 +300,12 @@ if (fs.existsSync(clientDist)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`🚀 MyLinks server running on http://localhost:${PORT}`);
-  console.log(`📂 Data directory: ${DATA_DIR}`);
-});
+if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
+  app.listen(PORT, () => {
+    console.log(`🚀 MyLinks server running on http://localhost:${PORT}`);
+    console.log(`📂 Data directory: ${DATA_DIR}`);
+  });
+}
+
+export { app };
+
