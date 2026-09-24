@@ -49,7 +49,7 @@ cd MyLinks
 ```yaml
 services:
   mylinks:
-    image: ghcr.io/arvesv/mylinks:0.2
+    image: ghcr.io/arvesv/mylinks:0.3
     container_name: mylinks
     restart: unless-stopped
     ports:
