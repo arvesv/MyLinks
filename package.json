@@ -1,6 +1,6 @@
 {
   "name": "mylinks",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Sleek, self-hosted bookmark dashboard with Tailscale authentication and instant search",
   "main": "dist/server.js",
   "type": "module",

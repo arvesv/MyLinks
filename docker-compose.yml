@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   mylinks:
+    image: ghcr.io/arvesv/mylinks:0.1
     build: .
     container_name: mylinks
     restart: unless-stopped
