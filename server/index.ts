@@ -245,7 +245,7 @@ app.post('/api/backup/import', requireAdmin, (req, res) => {
 const clientDist = path.join(process.cwd(), 'dist', 'client');
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
-  app.get('*', (_req, res) => {
+  app.get('/{*path}', (_req, res) => {
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 }
