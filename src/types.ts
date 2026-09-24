@@ -35,3 +35,28 @@ export interface AuthUser {
 }
 
 export type ViewMode = 'grid' | 'compact' | 'table';
+
+export interface SystemInfo {
+  version: string;
+  gitCommitSha: string;
+  gitCommitShort: string;
+  commitUrl?: string;
+  buildTime: string;
+  uptimeSeconds: number;
+  startedAt: string;
+  nodeVersion: string;
+  platform: string;
+  arch: string;
+  environment: string;
+  database: {
+    path: string;
+    sizeBytes: number;
+    totalCategories: number;
+    totalLinks: number;
+  };
+  memory: {
+    rss: number;
+    heapTotal: number;
+    heapUsed: number;
+  };
+}

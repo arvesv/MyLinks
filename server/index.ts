@@ -26,6 +26,7 @@ import {
 
 import { tailscaleAuthMiddleware, requireAdmin } from './auth';
 import { fetchUrlMetadata } from './metadata';
+import { getSystemInfo } from './system';
 
 // Initialize SQLite database
 initDatabase();
@@ -69,9 +70,18 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 // Apply Tailscale auth middleware to all /api routes
 app.use('/api', tailscaleAuthMiddleware);
 
-// --- Auth Endpoints ---
+// --- Auth & System Endpoints ---
 app.get('/api/auth/me', (req, res) => {
   res.json({ user: req.user });
+});
+
+app.get('/api/system/info', (_req, res) => {
+  try {
+    const info = getSystemInfo();
+    res.json(info);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // --- Categories & Links Endpoints ---

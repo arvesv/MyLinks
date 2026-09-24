@@ -1,4 +1,4 @@
-import { Category, LinkItem, AuthUser } from './types';
+import { Category, LinkItem, AuthUser, SystemInfo } from './types';
 
 export async function getAuthUser(): Promise<AuthUser> {
   const res = await fetch('/api/auth/me');
@@ -133,4 +133,10 @@ export async function importBackup(payload: any): Promise<void> {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || 'Failed to import backup');
   }
+}
+
+export async function getSystemInfo(): Promise<SystemInfo> {
+  const res = await fetch('/api/system/info');
+  if (!res.ok) throw new Error('Failed to fetch system info');
+  return res.json();
 }

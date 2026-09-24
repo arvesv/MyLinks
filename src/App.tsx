@@ -8,7 +8,8 @@ import { SearchModal } from './components/SearchModal';
 import { LinkModal } from './components/LinkModal';
 import { CategoryModal } from './components/CategoryModal';
 import { BackupModal } from './components/BackupModal';
-import { Category, LinkItem, AuthUser, ViewMode } from './types';
+import { SystemInfoModal } from './components/SystemInfoModal';
+import { Category, LinkItem, AuthUser, ViewMode, SystemInfo } from './types';
 import {
   getAuthUser,
   getCategories,
@@ -21,6 +22,7 @@ import {
   deleteLink,
   reorderLinks,
   recordLinkClick,
+  getSystemInfo,
 } from './api';
 import { Loader2 } from 'lucide-react';
 
@@ -40,6 +42,8 @@ export function App() {
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [backupModalOpen, setBackupModalOpen] = useState(false);
+  const [systemInfoModalOpen, setSystemInfoModalOpen] = useState(false);
+  const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [linkToEdit, setLinkToEdit] = useState<LinkItem | null>(null);
   const [targetCategoryId, setTargetCategoryId] = useState<string | undefined>(undefined);
 
@@ -62,12 +66,14 @@ export function App() {
   // Load initial data
   const loadData = async () => {
     try {
-      const [userData, categoriesData] = await Promise.all([
+      const [userData, categoriesData, sysInfo] = await Promise.all([
         getAuthUser().catch(() => null),
         getCategories(),
+        getSystemInfo().catch(() => null),
       ]);
       setUser(userData);
       setCategories(categoriesData);
+      if (sysInfo) setSystemInfo(sysInfo);
     } catch (err: any) {
       console.error('Failed to load dashboard data:', err);
     } finally {
@@ -77,6 +83,10 @@ export function App() {
 
   useEffect(() => {
     loadData();
+    const interval = setInterval(() => {
+      getSystemInfo().then(setSystemInfo).catch(() => {});
+    }, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   // View mode persistence
@@ -274,6 +284,8 @@ export function App() {
         onOpenAddLink={() => handleOpenAddLink()}
         onOpenCategories={() => setCategoryModalOpen(true)}
         onOpenBackup={() => setBackupModalOpen(true)}
+        onOpenSystemInfo={() => setSystemInfoModalOpen(true)}
+        systemInfo={systemInfo}
       />
 
       {/* Main Dashboard Container */}
@@ -331,9 +343,35 @@ export function App() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 dark:border-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span>MyLinks — Homelab Startpage & Bookmark Hub</span>
-          <div className="flex items-center gap-3">
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => setSystemInfoModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700/80 transition-colors font-mono text-[11px] cursor-pointer"
+              title="Click to view System & Build Info (Git SHA, build time, uptime)"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>v{systemInfo?.version || '0.1.0'}</span>
+              {systemInfo?.gitCommitShort && (
+                <span>({systemInfo.gitCommitShort})</span>
+              )}
+              {systemInfo?.uptimeSeconds !== undefined && (
+                <>
+                  <span>•</span>
+                  <span>
+                    Uptime: {systemInfo.uptimeSeconds >= 86400
+                      ? `${Math.floor(systemInfo.uptimeSeconds / 86400)}d ${Math.floor((systemInfo.uptimeSeconds % 86400) / 3600)}h`
+                      : systemInfo.uptimeSeconds >= 3600
+                      ? `${Math.floor(systemInfo.uptimeSeconds / 3600)}h ${Math.floor((systemInfo.uptimeSeconds % 3600) / 60)}m`
+                      : `${Math.floor(systemInfo.uptimeSeconds / 60)}m`}
+                  </span>
+                </>
+              )}
+            </button>
+
+            <span>•</span>
             <span>Tailnet Connected</span>
             <span>•</span>
             <button onClick={() => setSearchOpen(true)} className="hover:text-slate-700 dark:hover:text-slate-300">
@@ -374,6 +412,11 @@ export function App() {
         isOpen={backupModalOpen}
         onClose={() => setBackupModalOpen(false)}
         onRefreshData={loadData}
+      />
+
+      <SystemInfoModal
+        isOpen={systemInfoModalOpen}
+        onClose={() => setSystemInfoModalOpen(false)}
       />
     </div>
   );

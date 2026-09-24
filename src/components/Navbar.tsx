@@ -1,6 +1,6 @@
 import React from 'react';
-import { Search, LayoutGrid, List, Table, Plus, FolderKanban, Download, Shield, User as UserIcon } from 'lucide-react';
-import { AuthUser, ViewMode } from '../types';
+import { Search, LayoutGrid, List, Table, Plus, FolderKanban, Download, Shield, User as UserIcon, Info } from 'lucide-react';
+import { AuthUser, ViewMode, SystemInfo } from '../types';
 
 interface NavbarProps {
   user: AuthUser | null;
@@ -10,6 +10,8 @@ interface NavbarProps {
   onOpenAddLink: () => void;
   onOpenCategories: () => void;
   onOpenBackup: () => void;
+  onOpenSystemInfo: () => void;
+  systemInfo?: SystemInfo | null;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -20,6 +22,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAddLink,
   onOpenCategories,
   onOpenBackup,
+  onOpenSystemInfo,
+  systemInfo,
 }) => {
   const isAdmin = user?.role === 'admin';
 
@@ -40,6 +44,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                 Tailnet
               </span>
+              <button
+                onClick={onOpenSystemInfo}
+                className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-200 dark:hover:bg-slate-700/70 border border-slate-200 dark:border-slate-700/80 transition-colors cursor-pointer"
+                title="View System & Build Info (Git SHA, build time, uptime)"
+              >
+                <span>v{systemInfo?.version || '0.1.0'}</span>
+                {systemInfo?.gitCommitShort && (
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                    ({systemInfo.gitCommitShort})
+                  </span>
+                )}
+              </button>
             </h1>
           </div>
         </div>
@@ -107,6 +123,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Table className="w-4 h-4" />
             </button>
           </div>
+
+          {/* System Info Button */}
+          <button
+            onClick={onOpenSystemInfo}
+            className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="System & Build Info (Git commit SHA, build time, uptime)"
+          >
+            <Info className="w-4 h-4" />
+          </button>
 
           {/* Admin Action Buttons */}
           {isAdmin && (

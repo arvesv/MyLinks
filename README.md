@@ -28,6 +28,8 @@ Packaged as a single lightweight Docker container combining a responsive **React
   - **Tag Filter Chips**: Quickly isolate links across all categories by tag (`#iot`, `#media`, `#dev`).
 - **Backup & Portability**:
   - One-click JSON database export and restore directly from the UI.
+- **System & Build Info Diagnostics**:
+  - Clickable status indicators in the navbar and footer opening a comprehensive diagnostics modal showing Git commit SHA (with one-click copy & GitHub link), build timestamp, live server uptime ticker, Node.js runtime, OS architecture, memory usage, and SQLite database stats.
 - **Zero Heavy Dependencies**:
   - Embedded SQLite database stored in `/data/mylinks.db` with zero external database containers needed.
 

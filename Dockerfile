@@ -1,6 +1,9 @@
 # --- Stage 1: Build Frontend and Server ---
 FROM node:25-alpine AS builder
 
+ARG GIT_COMMIT_SHA=dev
+ARG BUILD_TIME=""
+
 WORKDIR /app
 
 # Copy dependency specifications
@@ -12,23 +15,31 @@ RUN npm ci
 # Copy project source
 COPY . .
 
+ENV GIT_COMMIT_SHA=$GIT_COMMIT_SHA
+ENV BUILD_TIME=$BUILD_TIME
+
 # Build React client (into dist/client) and bundle Express server (into dist/server.js)
 RUN npm run build
 
 # --- Stage 2: Production Runtime ---
 FROM node:25-alpine AS runner
 
+ARG GIT_COMMIT_SHA=dev
+ARG BUILD_TIME=""
+
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV DATA_DIR=/data
+ENV GIT_COMMIT_SHA=$GIT_COMMIT_SHA
+ENV BUILD_TIME=$BUILD_TIME
 
 # Install production dependencies only
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-# Copy compiled bundles from builder stage
+# Copy compiled bundles from builder stage (includes dist/build-info.json)
 COPY --from=builder /app/dist ./dist
 
 # Create data volume mount point
