@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Plus, Edit2, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
-import { Category, LinkItem, ViewMode } from '../types';
+import { Category, LinkItem, ViewMode, LinkHealth } from '../types';
 import { LinkCard } from './LinkCard';
 import { LinkListItem } from './LinkListItem';
 import { LinkTableRow } from './LinkTableRow';
@@ -11,6 +11,8 @@ interface CategorySectionProps {
   isAdmin: boolean;
   isFirst: boolean;
   isLast: boolean;
+  healthStatus?: Record<string, LinkHealth>;
+  onPingLink?: (link: LinkItem) => void;
   onToggleCollapse: (categoryId: string, collapsed: boolean) => void;
   onLinkClick: (link: LinkItem) => void;
   onAddLinkToCategory: (categoryId: string) => void;
@@ -29,6 +31,8 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
   isAdmin,
   isFirst,
   isLast,
+  healthStatus,
+  onPingLink,
   onToggleCollapse,
   onLinkClick,
   onAddLinkToCategory,
@@ -167,6 +171,8 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
                 key={link.id}
                 link={link}
                 isAdmin={isAdmin}
+                health={healthStatus?.[link.url]}
+                onPing={onPingLink}
                 onLinkClick={onLinkClick}
                 onEditLink={onEditLink}
                 onDeleteLink={onDeleteLink}
@@ -184,6 +190,8 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
                 key={link.id}
                 link={link}
                 isAdmin={isAdmin}
+                health={healthStatus?.[link.url]}
+                onPing={onPingLink}
                 onLinkClick={onLinkClick}
                 onEditLink={onEditLink}
                 onDeleteLink={onDeleteLink}
@@ -214,6 +222,8 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
                     key={link.id}
                     link={link}
                     isAdmin={isAdmin}
+                    health={healthStatus?.[link.url]}
+                    onPing={onPingLink}
                     onLinkClick={onLinkClick}
                     onEditLink={onEditLink}
                     onDeleteLink={onDeleteLink}

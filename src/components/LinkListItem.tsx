@@ -1,11 +1,14 @@
 import React from 'react';
 import { Star, Edit2, Trash2, ExternalLink } from 'lucide-react';
-import { LinkItem } from '../types';
+import { LinkItem, LinkHealth } from '../types';
 import { IconRenderer } from '../icons/IconRenderer';
+import { HealthBadge } from './HealthBadge';
 
 interface LinkListItemProps {
   link: LinkItem;
   isAdmin: boolean;
+  health?: LinkHealth;
+  onPing?: (link: LinkItem) => void;
   onLinkClick: (link: LinkItem) => void;
   onEditLink: (link: LinkItem) => void;
   onDeleteLink: (link: LinkItem) => void;
@@ -18,6 +21,8 @@ interface LinkListItemProps {
 export const LinkListItem: React.FC<LinkListItemProps> = ({
   link,
   isAdmin,
+  health,
+  onPing,
   onLinkClick,
   onEditLink,
   onDeleteLink,
@@ -50,9 +55,15 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
         </div>
 
         <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-          <div className="flex items-center gap-1 font-medium text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors text-sm truncate">
+          <div className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors text-sm truncate">
             <span>{link.title}</span>
             <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity flex-shrink-0" />
+            {health && (
+              <HealthBadge
+                health={health}
+                onPing={onPing ? () => onPing(link) : undefined}
+              />
+            )}
           </div>
 
           {link.description && (

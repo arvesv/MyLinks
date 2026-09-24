@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Flame, ChevronDown, ChevronRight } from 'lucide-react';
-import { LinkItem, ViewMode } from '../types';
+import { LinkItem, ViewMode, LinkHealth } from '../types';
 import { LinkCard } from './LinkCard';
 import { LinkListItem } from './LinkListItem';
 import { LinkTableRow } from './LinkTableRow';
@@ -9,7 +9,9 @@ interface FrequentlyUsedProps {
   links: LinkItem[];
   viewMode: ViewMode;
   isAdmin: boolean;
+  healthStatus?: Record<string, LinkHealth>;
   onLinkClick: (link: LinkItem) => void;
+  onPingLink?: (link: LinkItem) => void;
   onEditLink: (link: LinkItem) => void;
   onDeleteLink: (link: LinkItem) => void;
   onToggleFavorite: (link: LinkItem) => void;
@@ -19,7 +21,9 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
   links,
   viewMode,
   isAdmin,
+  healthStatus,
   onLinkClick,
+  onPingLink,
   onEditLink,
   onDeleteLink,
   onToggleFavorite,
@@ -64,6 +68,8 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
                 key={`freq-${link.id}`}
                 link={link}
                 isAdmin={isAdmin}
+                health={healthStatus?.[link.url]}
+                onPing={onPingLink}
                 onLinkClick={onLinkClick}
                 onEditLink={onEditLink}
                 onDeleteLink={onDeleteLink}
@@ -78,6 +84,8 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
                 key={`freq-${link.id}`}
                 link={link}
                 isAdmin={isAdmin}
+                health={healthStatus?.[link.url]}
+                onPing={onPingLink}
                 onLinkClick={onLinkClick}
                 onEditLink={onEditLink}
                 onDeleteLink={onDeleteLink}
@@ -105,6 +113,8 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
                     key={`freq-${link.id}`}
                     link={link}
                     isAdmin={isAdmin}
+                    health={healthStatus?.[link.url]}
+                    onPing={onPingLink}
                     onLinkClick={onLinkClick}
                     onEditLink={onEditLink}
                     onDeleteLink={onDeleteLink}

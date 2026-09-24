@@ -585,3 +585,11 @@ export function importBackup(backup: { categories: any[]; links: any[]; settings
     throw err;
   }
 }
+
+export function getLinkById(id: string): LinkRecord | undefined {
+  return db.prepare('SELECT * FROM links WHERE id = ?').get(id) as LinkRecord | undefined;
+}
+
+export function getAllLinks(): LinkRecord[] {
+  return db.prepare('SELECT * FROM links').all() as unknown as LinkRecord[];
+}

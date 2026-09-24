@@ -35,6 +35,16 @@ export interface AuthUser {
 }
 
 export type ViewMode = 'grid' | 'compact' | 'table';
+export type ThemeMode = 'system' | 'light' | 'dark';
+
+export interface LinkHealth {
+  url: string;
+  status: 'online' | 'offline' | 'unknown' | 'checking';
+  statusCode?: number;
+  latencyMs?: number;
+  error?: string;
+  checkedAt?: number;
+}
 
 export interface SystemInfo {
   version: string;
