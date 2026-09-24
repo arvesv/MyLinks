@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  mylinks:
+    build: .
+    container_name: mylinks
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATA_DIR=/data
+      # Comma-separated Tailscale user logins/emails with admin edit privileges
+      - ADMIN_USERS=arvesv,admin@example.com
+      # Set to true only for local non-tailscale testing
+      - DEV_MODE=false
+    volumes:
+      # Persistent storage for SQLite database and uploaded custom icons
+      - ./data:/data
+      # Optional: Mount Tailscale daemon socket for LocalAPI whois user identification
+      # - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock:ro
