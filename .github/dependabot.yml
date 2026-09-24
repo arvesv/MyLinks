@@ -20,7 +20,7 @@ updates:
     commit-message:
       prefix: "ci(deps)"
 
-  # Check for Docker base image updates weekly (e.g. node:22-alpine)
+  # Check for Docker base image updates weekly (e.g. node:24-alpine)
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
