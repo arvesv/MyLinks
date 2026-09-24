@@ -76,43 +76,43 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-slate-950/80 backdrop-blur-sm transition-all"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-slate-900/40 dark:bg-slate-950/80 backdrop-blur-sm transition-all"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh] animate-in fade-in zoom-in-95 duration-150"
+        className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh] animate-in fade-in zoom-in-95 duration-150"
         onClick={e => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-slate-800 gap-3">
-          <Search className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+        <div className="flex items-center px-4 py-3.5 border-b border-slate-200 dark:border-slate-800 gap-3">
+          <Search className="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Type to search bookmarks, services, URLs, or tags..."
-            className="w-full bg-transparent text-slate-100 placeholder-slate-400 focus:outline-none text-base"
+            className="w-full bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-base"
           />
           {query && (
             <button
               onClick={() => setQuery('')}
-              className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200"
+              className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               <X className="w-4 h-4" />
             </button>
           )}
-          <kbd className="px-2 py-0.5 text-[11px] font-semibold text-slate-400 bg-slate-800 border border-slate-700 rounded">
+          <kbd className="px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded">
             ESC
           </kbd>
         </div>
 
         {/* Results List */}
-        <div className="flex-1 overflow-y-auto p-2 divide-y divide-slate-800/40">
+        <div className="flex-1 overflow-y-auto p-2 divide-y divide-slate-100 dark:divide-slate-800/40">
           {filteredLinks.length === 0 ? (
             <div className="text-center py-12 px-4">
-              <p className="text-slate-400 text-sm">No bookmarks matching "{query}"</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">No bookmarks matching "{query}"</p>
             </div>
           ) : (
             filteredLinks.map((link, idx) => {
@@ -127,30 +127,32 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   }}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors ${
-                    isSelected ? 'bg-indigo-600/20 text-white border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800/50'
+                    isSelected
+                      ? 'bg-indigo-50 dark:bg-indigo-600/20 text-indigo-950 dark:text-white border border-indigo-200 dark:border-indigo-500/30'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700/60 flex items-center justify-center p-1.5 text-indigo-400 flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 flex items-center justify-center p-1.5 text-indigo-600 dark:text-indigo-400 flex-shrink-0">
                       <IconRenderer icon={link.icon} iconType={link.icon_type} className="w-5 h-5" />
                     </div>
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-sm truncate">{link.title}</span>
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/50">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/50">
                           {link.categoryName}
                         </span>
                       </div>
                       {link.description && (
-                        <p className="text-xs text-slate-400 truncate mt-0.5">{link.description}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{link.description}</p>
                       )}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {isSelected && (
-                      <span className="hidden sm:flex items-center gap-1 text-[11px] text-indigo-300">
+                      <span className="hidden sm:flex items-center gap-1 text-[11px] text-indigo-600 dark:text-indigo-300">
                         <CornerDownLeft className="w-3 h-3" /> Open
                       </span>
                     )}
@@ -163,11 +165,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-500">
+        <div className="px-4 py-2 bg-slate-50 dark:bg-slate-950/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
           <span>{filteredLinks.length} {filteredLinks.length === 1 ? 'bookmark' : 'bookmarks'}</span>
           <div className="flex items-center gap-3">
-            <span>Navigate: <kbd className="px-1 bg-slate-800 rounded">↑</kbd> <kbd className="px-1 bg-slate-800 rounded">↓</kbd></span>
-            <span>Select: <kbd className="px-1 bg-slate-800 rounded">↵</kbd></span>
+            <span>Navigate: <kbd className="px-1 bg-slate-200 dark:bg-slate-800 rounded">↑</kbd> <kbd className="px-1 bg-slate-200 dark:bg-slate-800 rounded">↓</kbd></span>
+            <span>Select: <kbd className="px-1 bg-slate-200 dark:bg-slate-800 rounded">↵</kbd></span>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Globe, Check } from 'lucide-react';
+import { Upload, Check } from 'lucide-react';
 import { HOMELAB_ICONS } from '../icons/homelabIcons';
 import { POPULAR_LUCIDE_ICONS, IconRenderer } from '../icons/IconRenderer';
 import { uploadCustomIcon } from '../api';
@@ -42,25 +42,25 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
           Icon Selection
         </label>
         {/* Preview */}
-        <div className="flex items-center gap-2 text-xs text-slate-300">
+        <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
           <span>Selected:</span>
-          <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center p-1 text-indigo-400">
+          <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center p-1 text-indigo-600 dark:text-indigo-400">
             <IconRenderer icon={currentIcon} iconType={currentIconType} className="w-5 h-5" />
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex rounded-xl bg-slate-950 p-1 border border-slate-800 text-xs">
+      <div className="flex rounded-xl bg-slate-100 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800 text-xs">
         <button
           type="button"
           onClick={() => setTab('homelab')}
           className={`flex-1 py-1.5 font-medium rounded-lg transition-colors ${
-            tab === 'homelab' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            tab === 'homelab' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Homelab Brands
@@ -69,7 +69,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           type="button"
           onClick={() => setTab('lucide')}
           className={`flex-1 py-1.5 font-medium rounded-lg transition-colors ${
-            tab === 'lucide' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            tab === 'lucide' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Icons
@@ -78,7 +78,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           type="button"
           onClick={() => setTab('favicon')}
           className={`flex-1 py-1.5 font-medium rounded-lg transition-colors ${
-            tab === 'favicon' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            tab === 'favicon' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Favicon / URL
@@ -87,7 +87,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           type="button"
           onClick={() => setTab('upload')}
           className={`flex-1 py-1.5 font-medium rounded-lg transition-colors ${
-            tab === 'upload' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            tab === 'upload' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Upload
@@ -96,7 +96,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
       {/* Tab Panels */}
       {tab === 'homelab' && (
-        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-1 bg-slate-950/40 rounded-xl border border-slate-800/80">
+        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800/80">
           {Object.entries(HOMELAB_ICONS).map(([key, item]) => {
             const isSelected = currentIcon === key && currentIconType === 'homelab';
             return (
@@ -106,8 +106,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 onClick={() => onChange(key, 'homelab')}
                 className={`relative p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
                   isSelected
-                    ? 'bg-indigo-600/30 border-indigo-500 text-indigo-300 ring-2 ring-indigo-500/50'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-indigo-50 dark:bg-indigo-600/30 border-indigo-500 text-indigo-600 dark:text-indigo-300 ring-2 ring-indigo-500/50'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title={item.label}
               >
@@ -124,7 +124,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
       )}
 
       {tab === 'lucide' && (
-        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-1 bg-slate-950/40 rounded-xl border border-slate-800/80">
+        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800/80">
           {POPULAR_LUCIDE_ICONS.map(name => {
             const isSelected = currentIcon === name && currentIconType === 'lucide';
             return (
@@ -134,8 +134,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 onClick={() => onChange(name, 'lucide')}
                 className={`relative p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
                   isSelected
-                    ? 'bg-indigo-600/30 border-indigo-500 text-indigo-300 ring-2 ring-indigo-500/50'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-indigo-50 dark:bg-indigo-600/30 border-indigo-500 text-indigo-600 dark:text-indigo-300 ring-2 ring-indigo-500/50'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title={name}
               >
@@ -152,12 +152,12 @@ export const IconPicker: React.FC<IconPickerProps> = ({
       )}
 
       {tab === 'favicon' && (
-        <div className="space-y-3 p-3 bg-slate-950/40 rounded-xl border border-slate-800/80">
+        <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800/80">
           {autoFaviconUrl && (
-            <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <img src={autoFaviconUrl} alt="" className="w-5 h-5 rounded object-contain" />
-                <span className="text-xs text-slate-300">Website Favicon</span>
+                <span className="text-xs text-slate-700 dark:text-slate-300">Website Favicon</span>
               </div>
               <button
                 type="button"
@@ -173,7 +173,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           )}
 
           <div>
-            <label className="text-xs text-slate-400 block mb-1">Direct Image / Icon URL</label>
+            <label className="text-xs text-slate-600 dark:text-slate-400 block mb-1">Direct Image / Icon URL</label>
             <div className="flex gap-2">
               <input
                 type="url"
@@ -183,7 +183,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                   onChange(e.target.value, 'favicon');
                 }}
                 placeholder="https://example.com/logo.png"
-                className="flex-1 px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="flex-1 px-3 py-1.5 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
               />
             </div>
           </div>
@@ -191,10 +191,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({
       )}
 
       {tab === 'upload' && (
-        <div className="p-4 bg-slate-950/40 rounded-xl border border-slate-800/80 text-center">
-          <label className="cursor-pointer block border-2 border-dashed border-slate-800 hover:border-indigo-500/60 rounded-xl p-4 transition-colors">
+        <div className="p-4 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800/80 text-center">
+          <label className="cursor-pointer block border-2 border-dashed border-slate-300 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-500/60 rounded-xl p-4 transition-colors">
             <Upload className="w-6 h-6 text-slate-400 mx-auto mb-2" />
-            <span className="text-xs font-medium text-slate-300 block">
+            <span className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
               {uploading ? 'Uploading...' : 'Choose PNG, SVG, or WEBP image'}
             </span>
             <span className="text-[10px] text-slate-500 block mt-1">Up to 5MB</span>

@@ -94,19 +94,19 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-slate-950/80 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150"
+        className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-          <h2 className="text-lg font-bold text-white">Manage Categories</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Manage Categories</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -122,7 +122,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
               value={newCatName}
               onChange={e => setNewCatName(e.target.value)}
               placeholder="New category name (e.g. Smart Home)"
-              className="flex-1 px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none"
+              className="flex-1 px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-indigo-500 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none"
             />
             <button
               type="submit"
@@ -139,7 +139,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
             {categories.map((cat, idx) => (
               <div
                 key={cat.id}
-                className="flex items-center justify-between gap-3 p-3 bg-slate-950/60 border border-slate-800 rounded-xl"
+                className="flex items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl"
               >
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   {editingId === cat.id ? (
@@ -148,20 +148,20 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
                         type="text"
                         value={editName}
                         onChange={e => setEditName(e.target.value)}
-                        className="flex-1 px-2.5 py-1 text-sm bg-slate-900 border border-indigo-500 rounded-lg text-white focus:outline-none"
+                        className="flex-1 px-2.5 py-1 text-sm bg-white dark:bg-slate-900 border border-indigo-500 rounded-lg text-slate-900 dark:text-white focus:outline-none"
                         autoFocus
                       />
                       <button
                         onClick={() => handleSaveEdit(cat.id)}
-                        className="p-1.5 text-emerald-400 hover:bg-slate-800 rounded-lg"
+                        className="p-1.5 text-emerald-600 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg"
                       >
                         <Check className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
                     <div>
-                      <span className="font-semibold text-sm text-slate-200">{cat.name}</span>
-                      <span className="ml-2 text-xs text-slate-500">({cat.links?.length || 0} links)</span>
+                      <span className="font-semibold text-sm text-slate-800 dark:text-slate-200">{cat.name}</span>
+                      <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">({cat.links?.length || 0} links)</span>
                     </div>
                   )}
                 </div>
@@ -171,7 +171,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
                   <button
                     disabled={idx === 0}
                     onClick={() => handleMove(idx, 'up')}
-                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg disabled:opacity-30 transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg disabled:opacity-30 transition-colors"
                     title="Move up"
                   >
                     <ArrowUp className="w-4 h-4" />
@@ -180,7 +180,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
                   <button
                     disabled={idx === categories.length - 1}
                     onClick={() => handleMove(idx, 'down')}
-                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg disabled:opacity-30 transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg disabled:opacity-30 transition-colors"
                     title="Move down"
                   >
                     <ArrowDown className="w-4 h-4" />
@@ -188,7 +188,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
 
                   <button
                     onClick={() => handleStartEdit(cat)}
-                    className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Rename"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -196,7 +196,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
 
                   <button
                     onClick={() => handleDelete(cat)}
-                    className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Delete"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -208,10 +208,10 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end px-6 py-3 border-t border-slate-800 bg-slate-950/40">
+        <div className="flex justify-end px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-white bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors"
           >
             Done
           </button>

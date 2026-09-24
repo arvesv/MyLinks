@@ -8,7 +8,7 @@ import { SearchModal } from './components/SearchModal';
 import { LinkModal } from './components/LinkModal';
 import { CategoryModal } from './components/CategoryModal';
 import { BackupModal } from './components/BackupModal';
-import { Category, LinkItem, AuthUser, ViewMode, ThemeMode } from './types';
+import { Category, LinkItem, AuthUser, ViewMode } from './types';
 import {
   getAuthUser,
   getCategories,
@@ -33,9 +33,6 @@ export function App() {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem('mylinks_view_mode') as ViewMode) || 'grid';
   });
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    return (localStorage.getItem('mylinks_theme') as ThemeMode) || 'dark';
-  });
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   // Modal states
@@ -45,6 +42,22 @@ export function App() {
   const [backupModalOpen, setBackupModalOpen] = useState(false);
   const [linkToEdit, setLinkToEdit] = useState<LinkItem | null>(null);
   const [targetCategoryId, setTargetCategoryId] = useState<string | undefined>(undefined);
+
+  // System theme synchronization (follows OS/browser standard)
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (e.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    handleThemeChange(mediaQuery);
+    mediaQuery.addEventListener('change', handleThemeChange);
+    return () => mediaQuery.removeEventListener('change', handleThemeChange);
+  }, []);
 
   // Load initial data
   const loadData = async () => {
@@ -65,16 +78,6 @@ export function App() {
   useEffect(() => {
     loadData();
   }, []);
-
-  // Theme application
-  useEffect(() => {
-    localStorage.setItem('mylinks_theme', theme);
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
 
   // View mode persistence
   useEffect(() => {
@@ -253,7 +256,7 @@ export function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-3 text-slate-400">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center gap-3 text-slate-500 dark:text-slate-400">
         <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
         <span className="text-sm font-medium">Loading MyLinks...</span>
       </div>
@@ -261,14 +264,12 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white transition-colors duration-150">
       {/* Top Navbar */}
       <Navbar
         user={user}
         viewMode={viewMode}
         onSetViewMode={setViewMode}
-        theme={theme}
-        onToggleTheme={() => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenAddLink={() => handleOpenAddLink()}
         onOpenCategories={() => setCategoryModalOpen(true)}
@@ -299,8 +300,8 @@ export function App() {
         {/* Categories and Bookmarks */}
         {filteredCategories.length === 0 ? (
           <div className="text-center py-20 px-4">
-            <h3 className="text-lg font-semibold text-slate-300">No bookmarks found</h3>
-            <p className="text-sm text-slate-500 mt-1">
+            <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">No bookmarks found</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {selectedTag ? `No bookmarks tagged with #${selectedTag}` : 'Create a category or add your first link to get started.'}
             </p>
           </div>
@@ -329,13 +330,13 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200 dark:border-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>MyLinks — Homelab Startpage & Bookmark Hub</span>
           <div className="flex items-center gap-3">
             <span>Tailnet Connected</span>
             <span>•</span>
-            <button onClick={() => setSearchOpen(true)} className="hover:text-slate-300">
+            <button onClick={() => setSearchOpen(true)} className="hover:text-slate-700 dark:hover:text-slate-300">
               Search (<kbd className="text-[10px]">Ctrl+K</kbd>)
             </button>
           </div>

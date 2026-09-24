@@ -45,11 +45,11 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </div>
           <div className="flex items-center gap-2">
-            <Flame className="w-4 h-4 text-orange-400 fill-orange-400/30" />
-            <h2 className="text-base font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">
+            <Flame className="w-4 h-4 text-orange-500 dark:text-orange-400 fill-orange-500/30 dark:fill-orange-400/30" />
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
               Frequently Used
             </h2>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-medium">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium border border-slate-200 dark:border-transparent">
               {frequentLinks.length}
             </span>
           </div>
@@ -86,10 +86,10 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
             ))}
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40 backdrop-blur-sm">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 shadow-sm dark:shadow-none backdrop-blur-sm">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-slate-800 bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
                   <th className="py-2.5 px-3">Service / Title</th>
                   <th className="py-2.5 px-3">URL & Protocol</th>
                   <th className="py-2.5 px-3 hidden md:table-cell">Description</th>
@@ -99,7 +99,7 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
                   <th className="py-2.5 px-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                 {frequentLinks.map(link => (
                   <LinkTableRow
                     key={`freq-${link.id}`}

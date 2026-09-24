@@ -35,4 +35,3 @@ export interface AuthUser {
 }
 
 export type ViewMode = 'grid' | 'compact' | 'table';
-export type ThemeMode = 'dark' | 'light';

@@ -12,7 +12,7 @@ export const TagFilter: React.FC<TagFilterProps> = ({ tags, selectedTag, onSelec
 
   return (
     <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 scrollbar-none text-xs">
-      <div className="flex items-center gap-1 text-slate-400 mr-2 flex-shrink-0">
+      <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 mr-2 flex-shrink-0">
         <Tag className="w-3.5 h-3.5" />
         <span className="font-medium">Filter:</span>
       </div>
@@ -22,7 +22,7 @@ export const TagFilter: React.FC<TagFilterProps> = ({ tags, selectedTag, onSelec
         className={`px-2.5 py-1 rounded-lg font-medium transition-colors flex-shrink-0 ${
           selectedTag === null
             ? 'bg-indigo-600 text-white shadow-sm'
-            : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            : 'bg-slate-200/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-800'
         }`}
       >
         All
@@ -35,7 +35,7 @@ export const TagFilter: React.FC<TagFilterProps> = ({ tags, selectedTag, onSelec
           className={`px-2.5 py-1 rounded-lg font-medium transition-colors flex-shrink-0 capitalize ${
             selectedTag === tag
               ? 'bg-indigo-600 text-white shadow-sm'
-              : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              : 'bg-slate-200/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-800'
           }`}
         >
           #{tag}

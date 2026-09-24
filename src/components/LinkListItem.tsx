@@ -35,7 +35,7 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
       onDragStart={e => onDragStart && onDragStart(e, link.id)}
       onDragOver={e => onDragOver && onDragOver(e)}
       onDrop={e => onDrop && onDrop(e, link.id)}
-      className="group flex items-center justify-between gap-4 px-3.5 py-2.5 bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 hover:border-slate-700 rounded-xl transition-all"
+      className="group flex items-center justify-between gap-4 px-3.5 py-2.5 bg-white hover:bg-slate-50 dark:bg-slate-900/60 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 rounded-xl transition-all shadow-sm dark:shadow-none"
     >
       {/* Left: Icon + Title + Description */}
       <a
@@ -45,18 +45,18 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
         onClick={() => onLinkClick(link)}
         className="flex items-center gap-3 min-w-0 flex-1"
       >
-        <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700/60 flex items-center justify-center p-1.5 text-indigo-400 group-hover:bg-slate-700/80 transition-colors flex-shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 flex items-center justify-center p-1.5 text-indigo-600 dark:text-indigo-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700/80 transition-colors flex-shrink-0">
           <IconRenderer icon={link.icon} iconType={link.icon_type} className="w-5 h-5" />
         </div>
 
         <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-          <div className="flex items-center gap-1 font-medium text-slate-200 group-hover:text-indigo-300 transition-colors text-sm truncate">
+          <div className="flex items-center gap-1 font-medium text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors text-sm truncate">
             <span>{link.title}</span>
             <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity flex-shrink-0" />
           </div>
 
           {link.description && (
-            <span className="text-xs text-slate-400 truncate hidden md:inline">
+            <span className="text-xs text-slate-500 dark:text-slate-400 truncate hidden md:inline">
               {link.description}
             </span>
           )}
@@ -68,7 +68,7 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
         {tagsList.length > 0 && (
           <div className="hidden lg:flex items-center gap-1 text-[11px]">
             {tagsList.slice(0, 2).map(tag => (
-              <span key={tag} className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
+              <span key={tag} className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-transparent">
                 #{tag}
               </span>
             ))}
@@ -86,18 +86,18 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
             <button
               type="button"
               onClick={() => onToggleFavorite(link)}
-              className={`p-1 rounded hover:bg-slate-800 transition-colors ${
-                isFavorite ? 'text-amber-400' : 'text-slate-400 hover:text-amber-400'
+              className={`p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${
+                isFavorite ? 'text-amber-500 dark:text-amber-400' : 'text-slate-400 hover:text-amber-500 dark:hover:text-amber-400'
               }`}
               title={isFavorite ? 'Unfavorite' : 'Favorite'}
             >
-              <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-amber-400' : ''}`} />
+              <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-amber-500 dark:fill-amber-400' : ''}`} />
             </button>
 
             <button
               type="button"
               onClick={() => onEditLink(link)}
-              className="p-1 rounded text-slate-400 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
+              className="p-1 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               title="Edit"
             >
               <Edit2 className="w-3.5 h-3.5" />
@@ -106,7 +106,7 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
             <button
               type="button"
               onClick={() => onDeleteLink(link)}
-              className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
+              className="p-1 rounded text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               title="Delete"
             >
               <Trash2 className="w-3.5 h-3.5" />

@@ -1,13 +1,11 @@
 import React from 'react';
-import { Search, LayoutGrid, List, Table, Plus, FolderKanban, Download, Moon, Sun, Shield, User as UserIcon } from 'lucide-react';
-import { AuthUser, ViewMode, ThemeMode } from '../types';
+import { Search, LayoutGrid, List, Table, Plus, FolderKanban, Download, Shield, User as UserIcon } from 'lucide-react';
+import { AuthUser, ViewMode } from '../types';
 
 interface NavbarProps {
   user: AuthUser | null;
   viewMode: ViewMode;
   onSetViewMode: (mode: ViewMode) => void;
-  theme: ThemeMode;
-  onToggleTheme: () => void;
   onOpenSearch: () => void;
   onOpenAddLink: () => void;
   onOpenCategories: () => void;
@@ -18,8 +16,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   user,
   viewMode,
   onSetViewMode,
-  theme,
-  onToggleTheme,
   onOpenSearch,
   onOpenAddLink,
   onOpenCategories,
@@ -28,7 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const isAdmin = user?.role === 'admin';
 
   return (
-    <header className="sticky top-0 z-30 bg-slate-900/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+    <header className="sticky top-0 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo & Name */}
         <div className="flex items-center gap-3">
@@ -39,9 +35,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </svg>
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
               MyLinks
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                 Tailnet
               </span>
             </h1>
@@ -52,13 +48,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex-1 max-w-md hidden md:block">
           <button
             onClick={onOpenSearch}
-            className="w-full flex items-center justify-between px-3.5 py-2 text-sm text-slate-400 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-slate-600 rounded-xl transition-all shadow-inner group"
+            className="w-full flex items-center justify-between px-3.5 py-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200/70 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 rounded-xl transition-all shadow-inner group"
           >
             <span className="flex items-center gap-2.5">
-              <Search className="w-4 h-4 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+              <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
               <span>Search bookmarks, services, or tags...</span>
             </span>
-            <kbd className="hidden lg:inline-flex items-center gap-0.5 px-2 py-0.5 text-[11px] font-semibold text-slate-400 bg-slate-900 border border-slate-700 rounded-md">
+            <kbd className="hidden lg:inline-flex items-center gap-0.5 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md">
               Ctrl+K
             </kbd>
           </button>
@@ -69,20 +65,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={onOpenSearch}
-            className="md:hidden p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+            className="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
             title="Search (Ctrl+K)"
           >
             <Search className="w-5 h-5" />
           </button>
 
           {/* View Mode Segmented Control */}
-          <div className="flex items-center rounded-xl bg-slate-900 border border-slate-800 p-0.5" role="group" aria-label="View mode">
+          <div className="flex items-center rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-0.5" role="group" aria-label="View mode">
             <button
               onClick={() => onSetViewMode('grid')}
               className={`p-1.5 rounded-lg transition-colors ${
                 viewMode === 'grid'
                   ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
               }`}
               title="Card Grid View"
             >
@@ -93,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className={`p-1.5 rounded-lg transition-colors ${
                 viewMode === 'compact'
                   ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
               }`}
               title="Compact List View"
             >
@@ -104,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className={`p-1.5 rounded-lg transition-colors ${
                 viewMode === 'table'
                   ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
               }`}
               title="Dense Detailed Table (Shows URL, Protocol, Tags, Dates, and Details)"
             >
@@ -112,33 +108,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Theme Toggle */}
-          <button
-            onClick={onToggleTheme}
-            className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-slate-800"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
-
           {/* Admin Action Buttons */}
           {isAdmin && (
-            <div className="flex items-center gap-1.5 ml-1 pl-2 border-l border-slate-800">
+            <div className="flex items-center gap-1.5 ml-1 pl-2 border-l border-slate-200 dark:border-slate-800">
               <button
                 onClick={onOpenCategories}
-                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 rounded-lg transition-colors"
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-lg transition-colors"
                 title="Manage Categories"
               >
-                <FolderKanban className="w-3.5 h-3.5 text-slate-400" />
+                <FolderKanban className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                 <span>Categories</span>
               </button>
 
               <button
                 onClick={onOpenBackup}
-                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 rounded-lg transition-colors"
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-lg transition-colors"
                 title="Backup & Restore"
               >
-                <Download className="w-3.5 h-3.5 text-slate-400" />
+                <Download className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                 <span>Backup</span>
               </button>
 
@@ -154,23 +141,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* User Profile / Tailscale Badge */}
           {user && (
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-800 text-xs">
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800 text-xs">
               {user.profilePic ? (
-                <img src={user.profilePic} alt="" className="w-7 h-7 rounded-full border border-slate-700" />
+                <img src={user.profilePic} alt="" className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700" />
               ) : (
-                <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 font-semibold text-[11px]">
+                <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 font-semibold text-[11px]">
                   {user.name ? user.name.slice(0, 2).toUpperCase() : <UserIcon className="w-3.5 h-3.5" />}
                 </div>
               )}
               <div className="hidden lg:block text-left">
-                <div className="font-medium text-slate-200 leading-tight">{user.name || user.login}</div>
+                <div className="font-medium text-slate-800 dark:text-slate-200 leading-tight">{user.name || user.login}</div>
                 <div className="flex items-center gap-1 text-[10px]">
                   {isAdmin ? (
-                    <span className="text-emerald-400 font-semibold flex items-center gap-0.5">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
                       <Shield className="w-2.5 h-2.5" /> Admin
                     </span>
                   ) : (
-                    <span className="text-slate-400">Viewer</span>
+                    <span className="text-slate-500 dark:text-slate-400">Viewer</span>
                   )}
                 </div>
               </div>
