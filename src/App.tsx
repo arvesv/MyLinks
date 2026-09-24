@@ -24,12 +24,18 @@ import {
   recordLinkClick,
   getSystemInfo,
 } from './api';
-import { Loader2 } from 'lucide-react';
+import { loadOfflineSnapshot, saveOfflineSnapshot } from './offlineStorage';
+import { Loader2, WifiOff, RefreshCw } from 'lucide-react';
 
 export function App() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const initialSnapshot = useMemo(() => loadOfflineSnapshot(), []);
+  const [user, setUser] = useState<AuthUser | null>(initialSnapshot.user);
+  const [categories, setCategories] = useState<Category[]>(initialSnapshot.categories || []);
+  const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(initialSnapshot.systemInfo);
+  const [snapshotTimestamp, setSnapshotTimestamp] = useState<number | null>(initialSnapshot.timestamp);
+  const [isOnline, setIsOnline] = useState<boolean>(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
+  const [isRetrying, setIsRetrying] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(() => !initialSnapshot.categories);
 
   // Settings & display modes
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
@@ -43,7 +49,6 @@ export function App() {
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [backupModalOpen, setBackupModalOpen] = useState(false);
   const [systemInfoModalOpen, setSystemInfoModalOpen] = useState(false);
-  const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [linkToEdit, setLinkToEdit] = useState<LinkItem | null>(null);
   const [targetCategoryId, setTargetCategoryId] = useState<string | undefined>(undefined);
 
@@ -63,8 +68,9 @@ export function App() {
     return () => mediaQuery.removeEventListener('change', handleThemeChange);
   }, []);
 
-  // Load initial data
-  const loadData = async () => {
+  // Load dashboard data and update local offline snapshot
+  const loadData = async (isManualRetry = false) => {
+    if (isManualRetry) setIsRetrying(true);
     try {
       const [userData, categoriesData, sysInfo] = await Promise.all([
         getAuthUser().catch(() => null),
@@ -74,17 +80,57 @@ export function App() {
       setUser(userData);
       setCategories(categoriesData);
       if (sysInfo) setSystemInfo(sysInfo);
+      setIsOnline(true);
+      const now = Date.now();
+      setSnapshotTimestamp(now);
+      saveOfflineSnapshot({
+        categories: categoriesData,
+        user: userData,
+        systemInfo: sysInfo,
+      });
     } catch (err: any) {
-      console.error('Failed to load dashboard data:', err);
+      console.warn('[Offline] Failed to load data from server; operating in offline/cached mode:', err);
+      setIsOnline(false);
     } finally {
       setLoading(false);
+      if (isManualRetry) setIsRetrying(false);
     }
   };
+
+  // Connectivity monitoring (online/offline window events)
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      loadData();
+    };
+    const handleOffline = () => {
+      setIsOnline(false);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     loadData();
     const interval = setInterval(() => {
-      getSystemInfo().then(setSystemInfo).catch(() => {});
+      if (navigator.onLine) {
+        getSystemInfo()
+          .then((info) => {
+            setSystemInfo(info);
+            setIsOnline(true);
+          })
+          .catch(() => {
+            setIsOnline(false);
+          });
+      } else {
+        setIsOnline(false);
+      }
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -150,7 +196,9 @@ export function App() {
 
   // Link interactions
   const handleLinkClick = (link: LinkItem) => {
-    recordLinkClick(link.id);
+    if (isOnline) {
+      recordLinkClick(link.id);
+    }
     setCategories(prev =>
       prev.map(c => ({
         ...c,
@@ -263,6 +311,13 @@ export function App() {
   };
 
   const isAdmin = user?.role === 'admin';
+  const canEdit = isAdmin && isOnline;
+
+  const formattedSnapshotTime = useMemo(() => {
+    if (!snapshotTimestamp) return null;
+    const date = new Date(snapshotTimestamp);
+    return `${date.toLocaleDateString([], { month: 'short', day: 'numeric' })} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  }, [snapshotTimestamp]);
 
   if (loading) {
     return (
@@ -286,7 +341,30 @@ export function App() {
         onOpenBackup={() => setBackupModalOpen(true)}
         onOpenSystemInfo={() => setSystemInfoModalOpen(true)}
         systemInfo={systemInfo}
+        isOnline={isOnline}
       />
+
+      {/* Offline Status Banner */}
+      {!isOnline && (
+        <div className="bg-amber-500/10 dark:bg-amber-950/40 border-b border-amber-500/30 text-amber-800 dark:text-amber-300 px-4 py-2.5 text-xs transition-colors sticky top-16 z-20 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2">
+              <WifiOff className="w-4 h-4 text-amber-500 flex-shrink-0" />
+              <span>
+                <strong>Offline Mode:</strong> Showing cached snapshot of your dashboard{formattedSnapshotTime ? ` (${formattedSnapshotTime})` : ''}. All bookmarks remain clickable, but changes are disabled while disconnected.
+              </span>
+            </div>
+            <button
+              onClick={() => loadData(true)}
+              disabled={isRetrying}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 font-medium text-xs border border-amber-500/30 transition-all cursor-pointer flex-shrink-0"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isRetrying ? 'animate-spin' : ''}`} />
+              <span>{isRetrying ? 'Connecting...' : 'Retry Connection'}</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Dashboard Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -301,7 +379,7 @@ export function App() {
           <FrequentlyUsed
             links={allLinks}
             viewMode={viewMode}
-            isAdmin={isAdmin}
+            isAdmin={canEdit}
             onLinkClick={handleLinkClick}
             onEditLink={handleOpenEditLink}
             onDeleteLink={handleDeleteLink}
@@ -323,7 +401,7 @@ export function App() {
               key={category.id}
               category={category}
               viewMode={viewMode}
-              isAdmin={isAdmin}
+              isAdmin={canEdit}
               isFirst={idx === 0}
               isLast={idx === filteredCategories.length - 1}
               onToggleCollapse={handleToggleCollapse}

@@ -1,0 +1,17 @@
+{
+  "name": "MyLinks — Homelab Startpage",
+  "short_name": "MyLinks",
+  "description": "Vibe coded, self-hosted bookmark dashboard with Tailscale authentication and instant search",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
