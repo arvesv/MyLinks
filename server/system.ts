@@ -6,17 +6,22 @@ import { db } from './db';
 const serverStartTime = new Date();
 
 let cachedGitSha: string | null = null;
+let cachedGitBranch: string | null = null;
 let cachedBuildTime: string | null = null;
 let cachedVersion: string | null = null;
 
 function loadBuildInfo() {
-  if (cachedGitSha !== null && cachedBuildTime !== null && cachedVersion !== null) {
+  if (cachedGitSha !== null && cachedGitBranch !== null && cachedBuildTime !== null && cachedVersion !== null) {
     return;
   }
 
   // 1. Check environment variables
   if (process.env.GIT_COMMIT_SHA && process.env.GIT_COMMIT_SHA !== 'unknown' && process.env.GIT_COMMIT_SHA !== 'dev') {
     cachedGitSha = process.env.GIT_COMMIT_SHA.trim();
+  }
+
+  if (process.env.GIT_BRANCH && process.env.GIT_BRANCH !== 'unknown') {
+    cachedGitBranch = process.env.GIT_BRANCH.trim();
   }
 
   if (process.env.BUILD_TIME && process.env.BUILD_TIME !== 'unknown') {
@@ -29,6 +34,7 @@ function loadBuildInfo() {
     if (fs.existsSync(buildInfoPath)) {
       const data = JSON.parse(fs.readFileSync(buildInfoPath, 'utf8'));
       if (!cachedGitSha && data.gitCommitSha) cachedGitSha = data.gitCommitSha;
+      if (!cachedGitBranch && data.gitBranch) cachedGitBranch = data.gitBranch;
       if (!cachedBuildTime && data.buildTime) cachedBuildTime = data.buildTime;
       if (!cachedVersion && data.version) cachedVersion = data.version;
     }
@@ -46,7 +52,7 @@ function loadBuildInfo() {
     if (!cachedVersion) cachedVersion = '0.1.0';
   }
 
-  // 4. Fallback for git sha: execute git command if .git exists
+  // 4. Fallback for git sha & branch: execute git command if .git exists
   if (!cachedGitSha) {
     try {
       cachedGitSha = execSync('git rev-parse HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
@@ -54,6 +60,27 @@ function loadBuildInfo() {
         .trim();
     } catch {
       cachedGitSha = 'dev';
+    }
+  }
+
+  if (!cachedGitBranch) {
+    try {
+      const branch = execSync('git rev-parse --abbrev-ref HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+        .toString()
+        .trim();
+      if (branch && branch !== 'HEAD') {
+        cachedGitBranch = branch;
+      } else {
+        try {
+          cachedGitBranch = execSync('git describe --tags --exact-match', { stdio: ['ignore', 'pipe', 'ignore'] })
+            .toString()
+            .trim();
+        } catch {
+          cachedGitBranch = 'master';
+        }
+      }
+    } catch {
+      cachedGitBranch = 'master';
     }
   }
 
@@ -97,13 +124,17 @@ export function getSystemInfo() {
   const mem = process.memoryUsage();
   const sha = cachedGitSha || 'dev';
   const shortSha = sha.length >= 7 ? sha.slice(0, 7) : sha;
+  const branch = cachedGitBranch || 'master';
   const commitUrl = sha && sha !== 'dev' ? `https://github.com/arvesv/MyLinks/commit/${sha}` : undefined;
+  const branchUrl = branch && branch !== 'dev' ? `https://github.com/arvesv/MyLinks/tree/${branch}` : undefined;
 
   return {
     version: cachedVersion || '0.1.0',
     gitCommitSha: sha,
     gitCommitShort: shortSha,
+    gitBranch: branch,
     commitUrl,
+    branchUrl,
     buildTime: cachedBuildTime || serverStartTime.toISOString(),
     uptimeSeconds,
     startedAt: serverStartTime.toISOString(),

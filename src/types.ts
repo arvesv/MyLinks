@@ -40,7 +40,9 @@ export interface SystemInfo {
   version: string;
   gitCommitSha: string;
   gitCommitShort: string;
+  gitBranch: string;
   commitUrl?: string;
+  branchUrl?: string;
   buildTime: string;
   uptimeSeconds: number;
   startedAt: string;

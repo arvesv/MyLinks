@@ -355,7 +355,9 @@ export function App() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <span>v{systemInfo?.version || '0.1.0'}</span>
               {systemInfo?.gitCommitShort && (
-                <span>({systemInfo.gitCommitShort})</span>
+                <span>
+                  ({systemInfo.gitBranch ? `${systemInfo.gitBranch}@` : ''}{systemInfo.gitCommitShort})
+                </span>
               )}
               {systemInfo?.uptimeSeconds !== undefined && (
                 <>

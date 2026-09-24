@@ -65,6 +65,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             GIT_COMMIT_SHA=${{ github.sha }}
+            GIT_BRANCH=${{ github.ref_name }}
             BUILD_TIME=${{ steps.time.outputs.timestamp }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

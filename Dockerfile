@@ -2,6 +2,7 @@
 FROM node:25-alpine AS builder
 
 ARG GIT_COMMIT_SHA=dev
+ARG GIT_BRANCH=master
 ARG BUILD_TIME=""
 
 WORKDIR /app
@@ -16,6 +17,7 @@ RUN npm ci
 COPY . .
 
 ENV GIT_COMMIT_SHA=$GIT_COMMIT_SHA
+ENV GIT_BRANCH=$GIT_BRANCH
 ENV BUILD_TIME=$BUILD_TIME
 
 # Build React client (into dist/client) and bundle Express server (into dist/server.js)
@@ -25,6 +27,7 @@ RUN npm run build
 FROM node:25-alpine AS runner
 
 ARG GIT_COMMIT_SHA=dev
+ARG GIT_BRANCH=master
 ARG BUILD_TIME=""
 
 WORKDIR /app
@@ -33,6 +36,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV DATA_DIR=/data
 ENV GIT_COMMIT_SHA=$GIT_COMMIT_SHA
+ENV GIT_BRANCH=$GIT_BRANCH
 ENV BUILD_TIME=$BUILD_TIME
 
 # Install production dependencies only

@@ -52,7 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>v{systemInfo?.version || '0.1.0'}</span>
                 {systemInfo?.gitCommitShort && (
                   <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                    ({systemInfo.gitCommitShort})
+                    ({systemInfo.gitBranch ? `${systemInfo.gitBranch}@` : ''}{systemInfo.gitCommitShort})
                   </span>
                 )}
               </button>

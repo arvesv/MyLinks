@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   X,
   GitCommit,
+  GitBranch,
   Clock,
   Cpu,
   Database,
@@ -199,13 +200,40 @@ export const SystemInfoModal: React.FC<SystemInfoModalProps> = ({ isOpen, onClos
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+              {/* Git Branch / Tag */}
+              <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200/70 dark:border-slate-700/60">
+                <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">Git Branch / Tag</span>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <GitBranch className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                    <span className="font-mono text-xs font-semibold text-slate-900 dark:text-white truncate">
+                      {info?.gitBranch || 'master'}
+                    </span>
+                  </div>
+                  {info?.branchUrl && (
+                    <a
+                      href={info.branchUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
+                      title="View Branch on GitHub"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+              </div>
+
               {/* Commit SHA */}
               <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200/70 dark:border-slate-700/60">
                 <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">Git Commit SHA</span>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono text-xs font-medium text-slate-900 dark:text-white truncate" title={info?.gitCommitSha}>
-                    {info?.gitCommitShort || 'Loading...'}
-                  </span>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <GitCommit className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                    <span className="font-mono text-xs font-medium text-slate-900 dark:text-white truncate" title={info?.gitCommitSha}>
+                      {info?.gitCommitShort || 'Loading...'}
+                    </span>
+                  </div>
                   {info?.gitCommitSha && info.gitCommitSha !== 'dev' && (
                     <div className="flex items-center gap-1 shrink-0">
                       <button
@@ -221,7 +249,7 @@ export const SystemInfoModal: React.FC<SystemInfoModalProps> = ({ isOpen, onClos
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
-                          title="View on GitHub"
+                          title="View Commit on GitHub"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
@@ -232,16 +260,18 @@ export const SystemInfoModal: React.FC<SystemInfoModalProps> = ({ isOpen, onClos
               </div>
 
               {/* Build Time */}
-              <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200/70 dark:border-slate-700/60">
-                <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">Build Time</span>
-                <div className="text-xs font-medium text-slate-900 dark:text-white">
+              <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200/70 dark:border-slate-700/60 sm:col-span-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Build Time</span>
+                  {info?.buildTime && (
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                      {formatRelativeTime(info.buildTime)}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs font-medium text-slate-900 dark:text-white mt-1">
                   {info?.buildTime ? formatDateTime(info.buildTime) : 'Loading...'}
                 </div>
-                {info?.buildTime && (
-                  <span className="text-[11px] text-slate-400 dark:text-slate-500 block mt-0.5">
-                    {formatRelativeTime(info.buildTime)}
-                  </span>
-                )}
               </div>
             </div>
           </div>
