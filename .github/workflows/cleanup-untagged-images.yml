@@ -4,29 +4,35 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Simulate cleanup without deleting images (dry run)'
+        description: "Simulate cleanup without deleting images (dry run)"
         type: boolean
         required: false
         default: false
       package_name:
-        description: 'GHCR package name to clean up'
+        description: "GHCR package name to clean up"
         type: string
         required: false
-        default: 'mylinks'
+        default: "mylinks"
+      delete_tags:
+        description: "Tag pattern of images to clean up (e.g. sha-*)"
+        type: string
+        required: false
+        default: "sha-*"
 
 jobs:
   cleanup:
-    name: Delete Untagged Images
+    name: Delete Untagged and SHA Images
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Delete untagged images from GitHub Container Registry
-        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f  # v1.2.2
+      - name: Delete untagged and SHA-tagged images from GitHub Container Registry
+        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
           package: ${{ inputs.package_name || 'mylinks' }}
           delete-untagged: true
+          delete-tags: ${{ inputs.delete_tags || 'sha-*' }}
           dry-run: ${{ inputs.dry_run || false }}
