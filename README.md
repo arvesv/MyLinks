@@ -1,6 +1,6 @@
 # MyLinks 🚀
 
-A sleek, ultra-fast, self-hosted bookmark dashboard and homelab startpage designed for seamless operation within a **Tailscale tailnet**.
+A vibe coded, self-hosted bookmark dashboard and homelab startpage designed for seamless operation within a **Tailscale tailnet**.
 
 Packaged as a single lightweight Docker container combining a responsive **React 18 + Tailwind CSS** frontend, a **Node.js** backend, and an embedded **SQLite** database.
 
@@ -38,12 +38,14 @@ Packaged as a single lightweight Docker container combining a responsive **React
 ## 🚀 Quick Start with Docker Compose
 
 1. Clone or copy this repository:
+
 ```bash
 git clone https://github.com/your-username/MyLinks.git
 cd MyLinks
 ```
 
-2. Create a `docker-compose.yml`:
+1. Create a `docker-compose.yml`:
+
 ```yaml
 services:
   mylinks:
@@ -62,7 +64,8 @@ services:
       - ./data:/data
 ```
 
-3. Launch the container:
+1. Launch the container:
+
 ```bash
 docker compose up -d
 ```
@@ -74,6 +77,7 @@ Open `http://localhost:3000` (or your tailnet machine address) to start using yo
 ## 🔒 Tailscale Tailnet Integration
 
 ### Option 1: Tailscale Serve (Recommended)
+
 Tailscale Serve exposes your local service securely across your tailnet with automatic HTTPS and passes user identity headers (`Tailscale-User-Login`, `Tailscale-User-Name`):
 
 ```bash
@@ -82,14 +86,18 @@ tailscale serve --https=443 http://localhost:3000
 ```
 
 Add your Tailscale login handle to `ADMIN_USERS` in `docker-compose.yml`:
+
 ```env
 ADMIN_USERS=alice@example.com,bob@github
 ```
+
 - Alice and Bob will have full **Admin** editing capabilities (add, edit, delete, reorder links, and backup).
 - Anyone else on your tailnet will have **Viewer** permissions to browse, search, and click links.
 
 ### Option 2: Nginx Proxy Manager on Tailscale
+
 If you run Nginx Proxy Manager (NPM) on your tailnet machine:
+
 1. Create a Proxy Host pointing to `http://mylinks:3000` (or `http://host.docker.internal:3000`).
 2. Optional: Forward client IP and headers (`X-Forwarded-For`).
 3. To enable LocalAPI whois user detection, mount `/var/run/tailscale/tailscaled.sock` into the container.
@@ -125,6 +133,7 @@ npm run dev
 - API calls from `http://localhost:5173/api` are automatically proxied to port 3000.
 
 ### Build Production Bundle Locally
+
 ```bash
 npm run build
 npm start
@@ -135,6 +144,7 @@ npm start
 ## 📦 Data Storage & Backup
 
 All links, categories, and settings are saved in a single SQLite database file:
+
 - Database: `<DATA_DIR>/mylinks.db`
 - Uploaded Icons: `<DATA_DIR>/uploads/`
 
