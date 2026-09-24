@@ -43,11 +43,9 @@ cd MyLinks
 
 2. Create a `docker-compose.yml`:
 ```yaml
-version: '3.8'
-
 services:
   mylinks:
-    build: .
+    image: ghcr.io/arvesv/mylinks:0.1
     container_name: mylinks
     restart: unless-stopped
     ports:

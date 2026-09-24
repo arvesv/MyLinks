@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mylinks:
     image: ghcr.io/arvesv/mylinks:0.1
