@@ -100,7 +100,7 @@ app.post('/api/categories', requireAdmin, (req, res) => {
 app.put('/api/categories/:id', requireAdmin, (req, res) => {
   try {
     const { name, collapsed, sort_order } = req.body;
-    updateCategory(req.params.id, { name, collapsed, sort_order });
+    updateCategory(req.params.id as string, { name, collapsed, sort_order });
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -109,7 +109,7 @@ app.put('/api/categories/:id', requireAdmin, (req, res) => {
 
 app.delete('/api/categories/:id', requireAdmin, (req, res) => {
   try {
-    deleteCategory(req.params.id);
+    deleteCategory(req.params.id as string);
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -155,7 +155,7 @@ app.post('/api/links', requireAdmin, (req, res) => {
 
 app.put('/api/links/:id', requireAdmin, (req, res) => {
   try {
-    updateLink(req.params.id, req.body);
+    updateLink(req.params.id as string, req.body);
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -164,7 +164,7 @@ app.put('/api/links/:id', requireAdmin, (req, res) => {
 
 app.delete('/api/links/:id', requireAdmin, (req, res) => {
   try {
-    deleteLink(req.params.id);
+    deleteLink(req.params.id as string);
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -186,7 +186,7 @@ app.post('/api/links/reorder', requireAdmin, (req, res) => {
 
 app.post('/api/links/:id/click', (req, res) => {
   try {
-    incrementClickCount(req.params.id);
+    incrementClickCount(req.params.id as string);
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });

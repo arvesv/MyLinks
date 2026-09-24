@@ -3,6 +3,7 @@ import { Flame, ChevronDown, ChevronRight } from 'lucide-react';
 import { LinkItem, ViewMode } from '../types';
 import { LinkCard } from './LinkCard';
 import { LinkListItem } from './LinkListItem';
+import { LinkTableRow } from './LinkTableRow';
 
 interface FrequentlyUsedProps {
   links: LinkItem[];
@@ -70,7 +71,7 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
               />
             ))}
           </div>
-        ) : (
+        ) : viewMode === 'compact' ? (
           <div className="flex flex-col gap-2">
             {frequentLinks.map(link => (
               <LinkListItem
@@ -83,6 +84,35 @@ export const FrequentlyUsed: React.FC<FrequentlyUsedProps> = ({
                 onToggleFavorite={onToggleFavorite}
               />
             ))}
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40 backdrop-blur-sm">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-slate-800 bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+                  <th className="py-2.5 px-3">Service / Title</th>
+                  <th className="py-2.5 px-3">URL & Protocol</th>
+                  <th className="py-2.5 px-3 hidden md:table-cell">Description</th>
+                  <th className="py-2.5 px-3 hidden sm:table-cell">Tags</th>
+                  <th className="py-2.5 px-3 text-center hidden lg:table-cell">Clicks</th>
+                  <th className="py-2.5 px-3 text-center hidden xl:table-cell">Added</th>
+                  <th className="py-2.5 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {frequentLinks.map(link => (
+                  <LinkTableRow
+                    key={`freq-${link.id}`}
+                    link={link}
+                    isAdmin={isAdmin}
+                    onLinkClick={onLinkClick}
+                    onEditLink={onEditLink}
+                    onDeleteLink={onDeleteLink}
+                    onToggleFavorite={onToggleFavorite}
+                  />
+                ))}
+              </tbody>
+            </table>
           </div>
         )
       )}

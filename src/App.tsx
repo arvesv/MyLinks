@@ -266,7 +266,7 @@ export function App() {
       <Navbar
         user={user}
         viewMode={viewMode}
-        onToggleViewMode={() => setViewMode(prev => (prev === 'grid' ? 'compact' : 'grid'))}
+        onSetViewMode={setViewMode}
         theme={theme}
         onToggleTheme={() => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))}
         onOpenSearch={() => setSearchOpen(true)}

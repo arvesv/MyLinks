@@ -1,11 +1,11 @@
 import React from 'react';
-import { Search, LayoutGrid, List, Plus, FolderKanban, Download, Moon, Sun, Shield, User as UserIcon } from 'lucide-react';
+import { Search, LayoutGrid, List, Table, Plus, FolderKanban, Download, Moon, Sun, Shield, User as UserIcon } from 'lucide-react';
 import { AuthUser, ViewMode, ThemeMode } from '../types';
 
 interface NavbarProps {
   user: AuthUser | null;
   viewMode: ViewMode;
-  onToggleViewMode: () => void;
+  onSetViewMode: (mode: ViewMode) => void;
   theme: ThemeMode;
   onToggleTheme: () => void;
   onOpenSearch: () => void;
@@ -17,7 +17,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   user,
   viewMode,
-  onToggleViewMode,
+  onSetViewMode,
   theme,
   onToggleTheme,
   onOpenSearch,
@@ -75,14 +75,42 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Search className="w-5 h-5" />
           </button>
 
-          {/* View Mode Toggle */}
-          <button
-            onClick={onToggleViewMode}
-            className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-slate-800"
-            title={viewMode === 'grid' ? 'Switch to Compact List View' : 'Switch to Card Grid View'}
-          >
-            {viewMode === 'grid' ? <List className="w-5 h-5" /> : <LayoutGrid className="w-5 h-5" />}
-          </button>
+          {/* View Mode Segmented Control */}
+          <div className="flex items-center rounded-xl bg-slate-900 border border-slate-800 p-0.5" role="group" aria-label="View mode">
+            <button
+              onClick={() => onSetViewMode('grid')}
+              className={`p-1.5 rounded-lg transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              }`}
+              title="Card Grid View"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onSetViewMode('compact')}
+              className={`p-1.5 rounded-lg transition-colors ${
+                viewMode === 'compact'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              }`}
+              title="Compact List View"
+            >
+              <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onSetViewMode('table')}
+              className={`p-1.5 rounded-lg transition-colors ${
+                viewMode === 'table'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              }`}
+              title="Dense Detailed Table (Shows URL, Protocol, Tags, Dates, and Details)"
+            >
+              <Table className="w-4 h-4" />
+            </button>
+          </div>
 
           {/* Theme Toggle */}
           <button
