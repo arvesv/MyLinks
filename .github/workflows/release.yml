@@ -85,7 +85,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ steps.bump.outputs.version }}" \
-            --target "${{ steps.bump.outputs.version }}" \
             --title "${{ steps.bump.outputs.version }}" \
             --generate-notes
 
