@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mylinks-tailscale
+  labels:
+    app.kubernetes.io/name: mylinks
+spec:
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+        # Machine name to register on your Tailnet (e.g. https://mylinks.<tailnet>.ts.net)
+        - mylinks
+  rules:
+    - host: mylinks
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mylinks
+                port:
+                  number: 3000
