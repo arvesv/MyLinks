@@ -91,13 +91,13 @@ The cross-platform script automatically uses Helm if installed, or falls back to
 
 ```bash
 # Linux / macOS / WSL:
-./scripts/deploy-k8s.sh v0.4.0      # or latest, master
+./scripts/deploy-k8s.sh v0.4.0 default 1      # [TAG] [NAMESPACE] [REPLICAS]
 
 # Windows PowerShell:
-.\scripts\deploy-k8s.ps1 -Tag v0.4.0
+.\scripts\deploy-k8s.ps1 -Tag v0.4.0 -Replicas 1
 
 # npm script:
-npm run deploy:k8s -- v0.4.0
+npm run deploy:k8s -- v0.4.0 default 1
 ```
 
 ### Deploying with Helm
