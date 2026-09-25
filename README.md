@@ -154,6 +154,27 @@ If you run Nginx Proxy Manager (NPM) on your tailnet machine:
 2. Optional: Forward client IP and headers (`X-Forwarded-For`).
 3. To enable LocalAPI whois user detection, mount `/var/run/tailscale/tailscaled.sock` into the container.
 
+### Option 3: Tailscale Kubernetes Operator Ingress
+
+If you run the [Tailscale Kubernetes Operator](https://tailscale.com/kb/1236/kubernetes-operator) in your cluster:
+
+1. Apply the Tailscale Ingress manifest:
+
+```bash
+kubectl apply -f deploy/k8s/ingress-tailscale.yaml
+```
+
+Or with Helm:
+
+```bash
+helm upgrade --install mylinks ./deploy/helm/mylinks -f deploy/helm/mylinks/values-tailscale.yaml
+```
+
+2. The Tailscale Operator automatically:
+   - Registers a dedicated machine on your tailnet (e.g., `https://mylinks.<your-tailnet>.ts.net`).
+   - Provisions valid Let's Encrypt HTTPS certificates with automatic renewals.
+   - Forwards HTTPS traffic to `service/mylinks:3000` and passes user identity headers (`Tailscale-User-Login`, `Tailscale-User-Name`) directly to MyLinks.
+
 ---
 
 ## ⚙️ Configuration Variables

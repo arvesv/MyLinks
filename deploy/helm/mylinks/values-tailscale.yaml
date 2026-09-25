@@ -1,0 +1,13 @@
+# Helm values overlay to enable Tailscale Ingress for MyLinks
+# Usage: helm upgrade --install mylinks ./deploy/helm/mylinks -f ./deploy/helm/mylinks/values-tailscale.yaml
+ingress:
+  enabled: true
+  className: tailscale
+  hosts:
+    - host: mylinks
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - mylinks
