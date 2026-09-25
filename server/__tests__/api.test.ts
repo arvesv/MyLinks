@@ -98,4 +98,53 @@ describe('MyLinks API Integration Tests', () => {
       expect(res.body.name).toBe('Test Created Category');
     });
   });
+
+  describe('POST /api/favicon/download', () => {
+    it('downloads data URI favicon to /uploads and returns 200', async () => {
+      process.env.DEV_MODE = 'true';
+      const dataUri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+
+      const res = await request(app)
+        .post('/api/favicon/download')
+        .send({ url: dataUri });
+
+      expect(res.status).toBe(200);
+      expect(res.body.url).toMatch(/^\/uploads\/favicon-[a-f0-9]+\.png$/);
+    });
+
+    it('returns 400 when url is not provided', async () => {
+      process.env.DEV_MODE = 'true';
+
+      const res = await request(app)
+        .post('/api/favicon/download')
+        .send({});
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toContain('URL is required');
+    });
+  });
+
+  describe('POST /api/metadata/fetch', () => {
+    it('returns metadata object for valid URL', async () => {
+      process.env.DEV_MODE = 'true';
+
+      const res = await request(app)
+        .post('/api/metadata/fetch')
+        .send({ url: 'http://127.0.0.1:59998' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.title).toBeDefined();
+      expect(res.body.favicon).toBeDefined();
+    });
+
+    it('returns 400 when url is not provided', async () => {
+      process.env.DEV_MODE = 'true';
+
+      const res = await request(app)
+        .post('/api/metadata/fetch')
+        .send({});
+
+      expect(res.status).toBe(400);
+    });
+  });
 });

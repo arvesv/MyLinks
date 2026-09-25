@@ -27,7 +27,7 @@ import {
 } from './db';
 
 import { tailscaleAuthMiddleware, requireAdmin } from './auth';
-import { fetchUrlMetadata } from './metadata';
+import { fetchUrlMetadata, downloadFavicon } from './metadata';
 import { getSystemInfo } from './system';
 import { checkUrlHealth, checkMultipleUrls } from './health';
 
@@ -254,6 +254,20 @@ app.post('/api/metadata/fetch', requireAdmin, async (req, res) => {
     res.json(metadata);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// --- Favicon Download ---
+app.post('/api/favicon/download', requireAdmin, async (req, res) => {
+  try {
+    const { url } = req.body;
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+    const localUrl = await downloadFavicon(url);
+    res.json({ url: localUrl });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 });
 
