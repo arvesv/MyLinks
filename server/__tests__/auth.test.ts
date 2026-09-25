@@ -78,6 +78,68 @@ describe('Tailscale Auth Middleware', () => {
     expect(req.user.role).toBe('admin');
   });
 
+  it('assigns admin role when handle matches without domain suffix', async () => {
+    process.env.ADMIN_USERS = 'arvesv';
+    process.env.DEV_MODE = 'false';
+    process.env.NODE_ENV = 'production';
+
+    const req: any = {
+      headers: {
+        'tailscale-user-login': 'arvesv@github',
+        'tailscale-user-name': 'Arve Svendsen',
+      },
+      socket: {},
+    };
+    const res: any = {};
+    const next = vi.fn();
+
+    await tailscaleAuthMiddleware(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(req.user.login).toBe('arvesv@github');
+    expect(req.user.role).toBe('admin');
+  });
+
+  it('assigns admin role when ADMIN_USERS contains wildcard *', async () => {
+    process.env.ADMIN_USERS = '*';
+    process.env.DEV_MODE = 'false';
+    process.env.NODE_ENV = 'production';
+
+    const req: any = {
+      headers: {
+        'tailscale-user-login': 'random-user@tailnet.ts.net',
+      },
+      socket: {},
+    };
+    const res: any = {};
+    const next = vi.fn();
+
+    await tailscaleAuthMiddleware(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(req.user.role).toBe('admin');
+  });
+
+  it('assigns admin role to fallback user when tailnet-user is in ADMIN_USERS', async () => {
+    process.env.ADMIN_USERS = 'arvesv,tailnet-user';
+    process.env.DEV_MODE = 'false';
+    process.env.NODE_ENV = 'production';
+
+    const req: any = {
+      headers: {},
+      socket: {},
+    };
+    const res: any = {};
+    const next = vi.fn();
+
+    await tailscaleAuthMiddleware(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(req.user.login).toBe('tailnet-user');
+    expect(req.user.role).toBe('admin');
+    expect(req.user.source).toBe('fallback');
+  });
+
   it('provides dev-mode admin when DEV_MODE is true', async () => {
     process.env.DEV_MODE = 'true';
 

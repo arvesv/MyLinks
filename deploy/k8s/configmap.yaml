@@ -9,4 +9,4 @@ data:
   PORT: "3000"
   DATA_DIR: "/data"
   DEV_MODE: "false"
-  ADMIN_USERS: "arvesv"
+  ADMIN_USERS: "arvesv,tailnet-user"

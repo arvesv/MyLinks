@@ -19,12 +19,21 @@ declare global {
   }
 }
 
-const parseAdminUsers = (): string[] => {
+export const parseAdminUsers = (): string[] => {
   const adminUsersEnv = process.env.ADMIN_USERS || '';
   return adminUsersEnv
     .split(',')
     .map(u => u.trim().toLowerCase())
     .filter(Boolean);
+};
+
+export const isUserAdmin = (login: string, adminUsers: string[]): boolean => {
+  if (!adminUsers || adminUsers.length === 0 || adminUsers.includes('*')) {
+    return true;
+  }
+  const cleanLogin = login.trim().toLowerCase();
+  const usernamePrefix = cleanLogin.split('@')[0];
+  return adminUsers.includes(cleanLogin) || adminUsers.includes(usernamePrefix);
 };
 
 export async function tailscaleAuthMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -44,7 +53,7 @@ export async function tailscaleAuthMiddleware(req: Request, res: Response, next:
     const displayName = (req.headers['tailscale-user-name'] as string) || cleanLogin.split('@')[0] || cleanLogin;
     const profilePic = req.headers['tailscale-user-profile-pic'] as string | undefined;
 
-    const isAdmin = adminUsers.length === 0 || adminUsers.includes(cleanLogin);
+    const isAdmin = isUserAdmin(cleanLogin, adminUsers);
 
     req.user = {
       authenticated: true,
@@ -67,7 +76,7 @@ export async function tailscaleAuthMiddleware(req: Request, res: Response, next:
       const whoisData = await queryTailscaleWhois(socketPath, `${remoteIp}:${clientPort}`);
       if (whoisData && whoisData.UserProfile) {
         const cleanLogin = whoisData.UserProfile.LoginName.trim().toLowerCase();
-        const isAdmin = adminUsers.length === 0 || adminUsers.includes(cleanLogin);
+        const isAdmin = isUserAdmin(cleanLogin, adminUsers);
 
         req.user = {
           authenticated: true,
@@ -97,12 +106,14 @@ export async function tailscaleAuthMiddleware(req: Request, res: Response, next:
   }
 
   // 4. Fallback for open tailnet access (when no specific user header is present)
-  // If no admin users are configured, grant admin; otherwise grant viewer
+  // If no admin users are configured, grant admin; otherwise grant viewer unless fallback user or wildcard is matched
+  const fallbackLogin = 'tailnet-user';
+  const isAdmin = isUserAdmin(fallbackLogin, adminUsers);
   req.user = {
     authenticated: true,
-    login: 'tailnet-user',
+    login: fallbackLogin,
     name: 'Tailnet User',
-    role: adminUsers.length === 0 ? 'admin' : 'viewer',
+    role: isAdmin ? 'admin' : 'viewer',
     source: 'fallback',
   };
   return next();

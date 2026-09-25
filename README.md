@@ -91,20 +91,20 @@ The cross-platform script automatically uses Helm if installed, or falls back to
 
 ```bash
 # Linux / macOS / WSL:
-./scripts/deploy-k8s.sh v0.4.0 default 1      # [TAG] [NAMESPACE] [REPLICAS]
+./scripts/deploy-k8s.sh v0.4.0 default 1 "arvesv,tailnet-user" # [TAG] [NAMESPACE] [REPLICAS] [ADMIN_USERS]
 
 # Windows PowerShell:
-.\scripts\deploy-k8s.ps1 -Tag v0.4.0 -Replicas 1
+.\scripts\deploy-k8s.ps1 -Tag v0.4.0 -Replicas 1 -AdminUsers "arvesv,tailnet-user"
 
 # npm script:
-npm run deploy:k8s -- v0.4.0 default 1
+npm run deploy:k8s -- v0.4.0 default 1 "arvesv,tailnet-user"
 ```
 
 ### Deploying with Helm
 
 ```bash
-# Deploy or upgrade dynamically setting the tag
-helm upgrade --install mylinks ./deploy/helm/mylinks --set image.tag=v0.4.0
+# Deploy or upgrade dynamically setting the tag and admin users
+helm upgrade --install mylinks ./deploy/helm/mylinks --set image.tag=v0.4.0 --set env.ADMIN_USERS="arvesv,tailnet-user"
 ```
 
 ### Deploying with kubectl / Kustomize
@@ -183,7 +183,7 @@ helm upgrade --install mylinks ./deploy/helm/mylinks -f deploy/helm/mylinks/valu
 | :--- | :--- | :--- |
 | `PORT` | `3000` | Port on which the web server listens. |
 | `DATA_DIR` | `/data` | Path to persistent storage for SQLite database and uploaded icons. |
-| `ADMIN_USERS` | *empty* | Comma-separated list of Tailscale logins/emails granted edit permissions. If empty, all connections have admin access. |
+| `ADMIN_USERS` | *empty* | Comma-separated list of Tailscale logins/emails/handles granted edit permissions (e.g. `arvesv`, `user@example.com`, or `*` for all). Matches full login as well as handle prefix. Include `tailnet-user` to permit local port-forward admin access. |
 | `DEV_MODE` | `false` | When `true`, automatically assigns the client an admin role without requiring Tailscale headers. |
 | `TAILSCALE_SOCKET` | `/var/run/tailscale/tailscaled.sock` | Optional path to tailscaled daemon socket for LocalAPI whois identity lookups. |
 

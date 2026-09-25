@@ -21,6 +21,7 @@ param(
   [string]$Tag = "latest",
   [string]$Namespace = "default",
   [int]$Replicas = 1,
+  [string]$AdminUsers = "",
   [switch]$PreferKubectl
 )
 
@@ -39,22 +40,34 @@ Write-Host "🚀 Deploying MyLinks to Kubernetes" -ForegroundColor Cyan
 Write-Host "   Image Tag : $Tag" -ForegroundColor White
 Write-Host "   Replicas  : $Replicas" -ForegroundColor White
 Write-Host "   Namespace : $Namespace" -ForegroundColor White
+if ($AdminUsers) {
+  Write-Host "   Admins    : $AdminUsers" -ForegroundColor White
+}
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 $hasHelm = (Get-Command helm -ErrorAction SilentlyContinue) -ne $null
 
 if ($hasHelm -and -not $PreferKubectl) {
   Write-Host "📦 Method: Helm Chart (deploy/helm/mylinks)" -ForegroundColor Green
-  helm upgrade --install mylinks ./deploy/helm/mylinks `
-    --namespace $Namespace `
-    --create-namespace `
-    --set image.tag=$Tag `
-    --set replicaCount=$Replicas
+  $helmArgs = @(
+    "upgrade", "--install", "mylinks", "./deploy/helm/mylinks",
+    "--namespace", $Namespace,
+    "--create-namespace",
+    "--set", "image.tag=$Tag",
+    "--set", "replicaCount=$Replicas"
+  )
+  if ($AdminUsers) {
+    $helmArgs += @("--set", "env.ADMIN_USERS=$AdminUsers")
+  }
+  helm @helmArgs
 } else {
   Write-Host "📄 Method: kubectl / Kustomize (deploy/k8s)" -ForegroundColor Green
   kubectl apply -k ./deploy/k8s -n $Namespace
   kubectl scale deployment/mylinks --replicas=$Replicas -n $Namespace
   kubectl set image deployment/mylinks mylinks="ghcr.io/arvesv/mylinks:$Tag" -n $Namespace
+  if ($AdminUsers) {
+    kubectl set env deployment/mylinks ADMIN_USERS="$AdminUsers" -n $Namespace
+  }
 }
 
 Write-Host "⏳ Waiting for deployment rollout..." -ForegroundColor Yellow
