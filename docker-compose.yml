@@ -1,6 +1,6 @@
 services:
   mylinks:
-    image: ghcr.io/arvesv/mylinks:0.4.0
+    image: ghcr.io/arvesv/mylinks:0.4.1
     build: .
     container_name: mylinks
     restart: unless-stopped

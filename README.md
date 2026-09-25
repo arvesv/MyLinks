@@ -56,7 +56,7 @@ cd MyLinks
 ```yaml
 services:
   mylinks:
-    image: ghcr.io/arvesv/mylinks:0.4.0
+    image: ghcr.io/arvesv/mylinks:0.4.1
     container_name: mylinks
     restart: unless-stopped
     ports:
@@ -112,7 +112,7 @@ helm upgrade --install mylinks ./deploy/helm/mylinks --set image.tag=v0.4.0 --se
 ```bash
 # Apply base manifests and set tag on the fly
 kubectl apply -k deploy/k8s
-kubectl set image deployment/mylinks mylinks=ghcr.io/arvesv/mylinks:v0.4.0
+kubectl set image deployment/mylinks mylinks=ghcr.io/arvesv/mylinks:0.4.1
 ```
 
 ### Accessing MyLinks
