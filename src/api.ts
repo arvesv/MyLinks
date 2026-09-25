@@ -119,6 +119,17 @@ export async function uploadCustomIcon(file: File): Promise<string> {
   return data.url;
 }
 
+export async function downloadFaviconToServer(url: string): Promise<string> {
+  const res = await fetch('/api/favicon/download', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url }),
+  });
+  if (!res.ok) throw new Error('Failed to download favicon');
+  const data = await res.json();
+  return data.url;
+}
+
 export function downloadBackupUrl(): string {
   return '/api/backup/export';
 }

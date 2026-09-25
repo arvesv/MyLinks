@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Upload, Check } from 'lucide-react';
+import { Upload, Check, Download, Loader2 } from 'lucide-react';
 import { HOMELAB_ICONS } from '../icons/homelabIcons';
 import { POPULAR_LUCIDE_ICONS, IconRenderer } from '../icons/IconRenderer';
-import { uploadCustomIcon } from '../api';
+import { uploadCustomIcon, downloadFaviconToServer } from '../api';
 
 interface IconPickerProps {
   currentIcon: string;
@@ -21,7 +21,22 @@ export const IconPicker: React.FC<IconPickerProps> = ({
     (currentIconType as any) || 'homelab'
   );
   const [uploading, setUploading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [customUrl, setCustomUrl] = useState(currentIconType === 'favicon' ? currentIcon : '');
+
+  const handleDownloadCustomUrl = async () => {
+    if (!customUrl || !customUrl.startsWith('http')) return;
+    try {
+      setDownloading(true);
+      const downloaded = await downloadFaviconToServer(customUrl);
+      setCustomUrl(downloaded);
+      onChange(downloaded, 'favicon');
+    } catch (err: any) {
+      alert('Download failed: ' + err.message);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -185,6 +200,22 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 placeholder="https://example.com/logo.png"
                 className="flex-1 px-3 py-1.5 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
               />
+              {customUrl.startsWith('http') && !customUrl.startsWith('/uploads') && (
+                <button
+                  type="button"
+                  onClick={handleDownloadCustomUrl}
+                  disabled={downloading}
+                  className="px-2.5 py-1.5 text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors flex items-center gap-1 shrink-0"
+                  title="Download and host icon on this MyLinks server"
+                >
+                  {downloading ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Download className="w-3.5 h-3.5" />
+                  )}
+                  <span>Download</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
