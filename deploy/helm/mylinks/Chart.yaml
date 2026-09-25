@@ -1,0 +1,8 @@
+apiVersion: v2
+name: mylinks
+description: A Helm chart for MyLinks - Self-hosted bookmark dashboard with Tailscale authentication
+type: application
+version: 0.1.0
+appVersion: "0.4.0"
+maintainers:
+  - name: arvesv

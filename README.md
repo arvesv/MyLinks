@@ -81,6 +81,51 @@ Open `http://localhost:3000` (or your tailnet machine address) to start using yo
 
 ---
 
+## ☸️ Kubernetes Deployment (1-Node Cluster)
+
+MyLinks includes native support for 1-node Kubernetes clusters (such as k3s, Minikube, Kind, MicroK8s, or bare-metal nodes). You can choose any container image tag (`latest`, `master`, `v0.4.0`) directly from the command line without modifying manifest files.
+
+### Quick Start with CLI Helper
+
+The cross-platform script automatically uses Helm if installed, or falls back to native `kubectl`:
+
+```bash
+# Linux / macOS / WSL:
+./scripts/deploy-k8s.sh v0.4.0      # or latest, master
+
+# Windows PowerShell:
+.\scripts\deploy-k8s.ps1 -Tag v0.4.0
+
+# npm script:
+npm run deploy:k8s -- v0.4.0
+```
+
+### Deploying with Helm
+
+```bash
+# Deploy or upgrade dynamically setting the tag
+helm upgrade --install mylinks ./deploy/helm/mylinks --set image.tag=v0.4.0
+```
+
+### Deploying with kubectl / Kustomize
+
+```bash
+# Apply base manifests and set tag on the fly
+kubectl apply -k deploy/k8s
+kubectl set image deployment/mylinks mylinks=ghcr.io/arvesv/mylinks:v0.4.0
+```
+
+### Accessing MyLinks
+
+The service is exposed as **ClusterIP** on port 3000 (safe with SQLite single-pod `Recreate` deployment and local PVC). To access locally:
+
+```bash
+kubectl port-forward svc/mylinks 3000:3000
+```
+Open `http://localhost:3000` in your browser. For network-wide tailnet access, connect via an Ingress controller or the Tailscale Kubernetes Operator.
+
+---
+
 ## 🔒 Tailscale Tailnet Integration
 
 ### Option 1: Tailscale Serve (Recommended)
