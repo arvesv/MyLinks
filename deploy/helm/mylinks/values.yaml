@@ -1,0 +1,59 @@
+# Default values for mylinks.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/arvesv/mylinks
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  NODE_ENV: "production"
+  PORT: "3000"
+  DATA_DIR: "/data"
+  DEV_MODE: "false"
+  ADMIN_USERS: "arvesv"
+
+service:
+  type: ClusterIP
+  port: 3000
+  nodePort: null
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: mylinks.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  storageClassName: ""
+  existingClaim: ""
+
+tailscaleSocket:
+  enabled: false
+  hostPath: /var/run/tailscale/tailscaled.sock
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
