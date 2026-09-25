@@ -4,6 +4,7 @@
   "description": "Vibe coded, self-hosted bookmark dashboard with Tailscale authentication and instant search",
   "main": "dist/server.js",
   "type": "module",
+  "license": "GPL-2.0-only",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "tsx watch server/index.ts",

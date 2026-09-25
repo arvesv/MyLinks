@@ -163,3 +163,9 @@ All links, categories, and settings are saved in a single SQLite database file:
 - Uploaded Icons: `<DATA_DIR>/uploads/`
 
 You can back up simply by copying the `./data` directory or using the **Backup -> Export Snapshot** button in the dashboard navigation bar.
+
+---
+
+## 📄 License
+
+This project is licensed under the GNU General Public License v2.0 - see the [LICENSE](LICENSE) file for details.
