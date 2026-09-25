@@ -1,6 +1,6 @@
 {
   "name": "mylinks",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Vibe coded, self-hosted bookmark dashboard with Tailscale authentication and instant search",
   "main": "dist/server.js",
   "type": "module",
