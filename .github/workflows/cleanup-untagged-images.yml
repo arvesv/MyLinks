@@ -2,8 +2,8 @@ name: Cleanup Untagged Container Images
 
 on:
   schedule:
-    # Run daily at 03:00 UTC (early morning)
-    - cron: '0 3 * * *'
+    # Run daily at 01:17 UTC (~03:17 CEST/local time) avoiding top-of-the-hour queue delays
+    - cron: '17 1 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
