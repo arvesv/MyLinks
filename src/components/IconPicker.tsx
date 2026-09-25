@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, Check, Download, Loader2 } from 'lucide-react';
 import { HOMELAB_ICONS } from '../icons/homelabIcons';
 import { POPULAR_LUCIDE_ICONS, IconRenderer } from '../icons/IconRenderer';
@@ -23,6 +23,18 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   const [uploading, setUploading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [customUrl, setCustomUrl] = useState(currentIconType === 'favicon' ? currentIcon : '');
+
+  useEffect(() => {
+    if (currentIconType && ['homelab', 'lucide', 'favicon', 'upload'].includes(currentIconType)) {
+      setTab(currentIconType as any);
+    }
+  }, [currentIconType]);
+
+  useEffect(() => {
+    if (currentIconType === 'favicon' && currentIcon !== customUrl) {
+      setCustomUrl(currentIcon || '');
+    }
+  }, [currentIcon, currentIconType]);
 
   const handleDownloadCustomUrl = async () => {
     if (!customUrl || !customUrl.startsWith('http')) return;
@@ -180,9 +192,20 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                   onChange(autoFaviconUrl, 'favicon');
                   setCustomUrl(autoFaviconUrl);
                 }}
-                className="px-2.5 py-1 text-xs font-semibold bg-indigo-600 text-white rounded-md hover:bg-indigo-500 transition-colors"
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors flex items-center gap-1 ${
+                  currentIconType === 'favicon' && currentIcon === autoFaviconUrl
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-indigo-600 text-white hover:bg-indigo-500'
+                }`}
               >
-                Use this
+                {currentIconType === 'favicon' && currentIcon === autoFaviconUrl && (
+                  <Check className="w-3 h-3" />
+                )}
+                <span>
+                  {currentIconType === 'favicon' && currentIcon === autoFaviconUrl
+                    ? 'Selected'
+                    : 'Use this'}
+                </span>
               </button>
             </div>
           )}
@@ -191,7 +214,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             <label className="text-xs text-slate-600 dark:text-slate-400 block mb-1">Direct Image / Icon URL</label>
             <div className="flex gap-2">
               <input
-                type="url"
+                type="text"
                 value={customUrl}
                 onChange={e => {
                   setCustomUrl(e.target.value);
