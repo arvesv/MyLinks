@@ -1,5 +1,5 @@
 # --- Stage 1: Build Frontend and Server ---
-FROM node:25-alpine AS builder
+FROM node:26-alpine AS builder
 
 ARG GIT_COMMIT_SHA=dev
 ARG GIT_BRANCH=master
@@ -24,7 +24,7 @@ ENV BUILD_TIME=$BUILD_TIME
 RUN npm run build
 
 # --- Stage 2: Production Runtime ---
-FROM node:25-alpine AS runner
+FROM node:26-alpine AS runner
 
 ARG GIT_COMMIT_SHA=dev
 ARG GIT_BRANCH=master
